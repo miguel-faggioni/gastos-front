@@ -5,7 +5,12 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
-    "lint": "vue-cli-service lint"
+    "lint": "yarn lint:eslint && yarn lint:prettier",
+    "lint:eslint": "eslint \"**/*.*\"",
+    "lint:prettier": "prettier --check \"**/*.*\"",
+    "fix": "yarn fix:eslint && yarn fix:prettier",
+    "fix:eslint": "eslint --fix \"**/*.*\"",
+    "fix:prettier": "prettier --write \"**/*.*\""
   },
   "dependencies": {
     "core-js": "^3.6.5",
