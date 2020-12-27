@@ -1,12 +1,16 @@
 <template>
   <v-container>
     <v-row>
-      <v-text-field label="Valor" prefix="R$" v-model="valor"></v-text-field>
-      <v-select
-        :items="categorias"
-        label="Categoria"
-        v-model="categoria"
-      ></v-select>
+      <v-col>
+        <v-text-field label="Valor" prefix="R$" v-model="valor"></v-text-field>
+      </v-col>
+      <v-col>
+        <v-select
+          :items="categorias"
+          label="Categoria"
+          v-model="categoria"
+        ></v-select>
+      </v-col>
     </v-row>
     <v-row>
       <v-col>
@@ -44,6 +48,7 @@
           :items="modos"
           label="Modo de pagamento"
           v-model="modoDePagamento"
+          prepend-icon="credit_card"
         ></v-select>
       </v-col>
       <v-col>
