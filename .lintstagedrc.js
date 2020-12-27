@@ -1,6 +1,3 @@
 module.exports = {
-  "**/*.*": [
-    "yarn fix",
-    "git add"
-  ]
+  '**/*.*': ['yarn fix', 'git add'],
 }
