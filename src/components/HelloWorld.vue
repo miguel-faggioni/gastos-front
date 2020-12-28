@@ -20,6 +20,8 @@
             :items="categorias"
             label="Categoria"
             v-model="categoria"
+            return-object
+            item-text="nome"
             required
             ref="categoria"
             :error-messages="categoriaErrors"
@@ -50,6 +52,8 @@
             :items="modos"
             label="Modo de pagamento"
             v-model="modoDePagamento"
+            return-object
+            item-text="nome"
             prepend-icon="credit_card"
             required
             ref="modo"
@@ -71,18 +75,23 @@
 <script>
   import { validationMixin } from 'vuelidate'
   import { required, decimal } from 'vuelidate/lib/validators'
+  import { mapState } from 'vuex'
 
   export default {
     mixins: [validationMixin],
     name: 'HelloWorld',
+
+    async beforeCreate() {
+      await this.$store.dispatch('auth/login', { email: 'miguel@faggioni.com.br', senha: '1234' })
+      this.$store.dispatch('categoria/get')
+      this.$store.dispatch('pagamento/get')
+    },
 
     data: () => ({
       valor: null,
       categoria: null,
       modoDePagamento: null,
       data: new Date(),
-      categorias: ['cA', 'cB', 'cC'],
-      modos: ['cartao', 'dinheiro'],
       datetimepickerProps: {
         prependIcon: 'mdi-calendar',
       },
@@ -97,10 +106,13 @@
     methods: {
       inserir: function() {
         this.$v.$touch()
-        console.log({
+        if (this.$v.$invalid) {
+          return
+        }
+        this.$store.dispatch('gasto/create',{
           valor: this.valor,
           categoria: this.categoria,
-          modoDePagamento: this.modoDePagamento,
+          pagamento: this.modoDePagamento,
           data: this.data,
         })
         this.limpar()
@@ -114,22 +126,17 @@
     },
 
     validations: {
-      valor: {
-        required,
-        decimal,
-      },
-      categoria: {
-        required,
-      },
-      modoDePagamento: {
-        required,
-      },
-      data: {
-        required,
-      },
+      valor: { required, decimal },
+      categoria: { required },
+      modoDePagamento: { required },
+      data: { required },
     },
 
     computed: {
+      ...mapState({
+        categorias: state => state.categoria.categorias,
+        modos: state => state.pagamento.modos
+      }),
       valorErrors() {
         const errors = []
         if (!this.$v.valor.$dirty) return errors
