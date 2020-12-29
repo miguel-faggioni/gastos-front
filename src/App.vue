@@ -34,19 +34,19 @@
     </v-app-bar>
 
     <v-main>
-      <HelloWorld />
+      <InputGastos />
     </v-main>
   </v-app>
 </template>
 
 <script>
-  import HelloWorld from './components/HelloWorld'
+  import InputGastos from './components/InputGastos'
 
   export default {
     name: 'App',
 
     components: {
-      HelloWorld,
+      InputGastos,
     },
 
     data: () => ({

@@ -79,7 +79,7 @@
 
   export default {
     mixins: [validationMixin],
-    name: 'HelloWorld',
+    name: 'InputGastos',
 
     async beforeCreate() {
       await this.$store.dispatch('auth/login', { email: 'miguel@faggioni.com.br', senha: '1234' })
