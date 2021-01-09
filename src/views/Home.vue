@@ -1,18 +1,20 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <InputGastos msg="Welcome to Your Vue.js App" />
+  <div>
+    <InputGastos/>
   </div>
 </template>
 
 <script>
   // @ is an alias to /src
   import InputGastos from '@/components/InputGastos.vue'
+  import Login from '@/components/Login.vue'
+  import Register from '@/components/Register.vue'
 
   export default {
-    name: 'Home',
     components: {
       InputGastos,
+      Login,
+      Register,
     },
   }
 </script>

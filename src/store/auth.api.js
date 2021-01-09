@@ -18,7 +18,18 @@ export default {
       localStorage.setItem('token',response.data.token)
       context.commit('setToken',response.data.token)
     },
+    async register(context, { nome, email, senha }) {
+      let response = await axios.post('/auth/register',{nome:nome,email:email,senha:senha})
+      context.dispatch('login',{
+        email:email,
+        senha:senha
+      })
+    },
   },
   modules: {},
-  getters: {},
+  getters: {
+    isAuthenticated: state => {
+      return state.token !== null && state.token !== undefined
+    }
+  },
 }

@@ -82,7 +82,6 @@
     name: 'InputGastos',
 
     async beforeCreate() {
-      await this.$store.dispatch('auth/login', { email: 'miguel@faggioni.com.br', senha: '1234' })
       this.$store.dispatch('categoria/get')
       this.$store.dispatch('pagamento/get')
     },
