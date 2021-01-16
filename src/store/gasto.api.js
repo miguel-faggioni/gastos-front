@@ -33,6 +33,17 @@ export default {
     async downloadAll(context, { format }) {
       return axios.get(`/gastos/download/${format}`)
     },
+    async update(context, { id, valor, data, categoria, pagamento }) {
+      return axios.put(`/gastos/${id}`, {
+        valor: valor,
+        data: data,
+        idCategoria: categoria.id,
+        idModoDePagamento: pagamento.id,
+      })
+    },
+    async delete(context, { id }) {
+      return axios.delete(`/gastos/${id}`)
+    },
   },
   modules: {},
   getters: {},

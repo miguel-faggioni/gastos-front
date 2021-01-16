@@ -8,6 +8,7 @@ import 'material-design-icons-iconfont/dist/material-design-icons.css'
 import DatetimePicker from 'vuetify-datetime-picker'
 import Vuelidate from 'vuelidate'
 import './plugins/axios'
+import './plugins/date'
 
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)

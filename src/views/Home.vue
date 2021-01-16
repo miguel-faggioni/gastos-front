@@ -2,7 +2,7 @@
   <div>
     <v-tabs
       v-model="activeTab"
-      background-color="light-green"
+      background-color="primary"
       fixed-tabs
       centered
       dark
@@ -30,6 +30,7 @@
     <v-tabs-items v-model="activeTab">
       <v-tab-item value="tab-1">
         <InputGastos />
+        <ListGastos />
       </v-tab-item>
       <v-tab-item value="tab-2">
         <Configurations />
@@ -44,11 +45,13 @@
 <script>
   // @ is an alias to /src
   import InputGastos from '@/components/InputGastos.vue'
+  import ListGastos from '@/components/ListGastos.vue'
   import Configurations from '@/components/Configurations.vue'
 
   export default {
     components: {
       InputGastos,
+      ListGastos,
       Configurations,
     },
 

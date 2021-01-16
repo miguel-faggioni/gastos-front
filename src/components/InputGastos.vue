@@ -82,8 +82,10 @@
     name: 'InputGastos',
 
     async beforeCreate() {
-      this.$store.dispatch('categoria/get')
-      this.$store.dispatch('pagamento/get')
+      await Promise.all([
+        this.$store.dispatch('categoria/get'),
+        this.$store.dispatch('pagamento/get'),
+      ])
     },
 
     data: () => ({
@@ -120,7 +122,7 @@
       limpar: function() {
         this.$v.$reset()
         this.valor = null
-        this.data = new Date()
+        // this.data = new Date()
       },
     },
 
