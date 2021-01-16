@@ -9,6 +9,19 @@
 </template>
 
 <script>
+  export default {
+
+    mounted() {
+      let token = localStorage.getItem('token')
+      if (token !== undefined && token !== null) {
+        this.$store.commit('auth/setToken', token)
+        this.$router.push({
+          path: '/'
+        })
+      }
+    },
+
+  }
 </script>
 
 <style scoped lang="scss">
