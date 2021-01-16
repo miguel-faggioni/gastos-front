@@ -29,14 +29,19 @@
 
     <v-tabs-items v-model="activeTab">
       <v-tab-item
-        v-for="i in 3"
-        :key="i"
-        :value="'tab-' + i"
+        value="tab-1"
       >
         <InputGastos/>
-        <!-- <v-card flat>
-             <v-card-text>{{ text }}</v-card-text>
-             </v-card> -->
+      </v-tab-item>
+      <v-tab-item
+        value="tab-2"
+      >
+        <Configurations/>
+      </v-tab-item>
+      <v-tab-item
+        value="tab-3"
+      >
+        <Configurations/>
       </v-tab-item>
     </v-tabs-items>
 
@@ -46,14 +51,12 @@
 <script>
   // @ is an alias to /src
   import InputGastos from '@/components/InputGastos.vue'
-  import Login from '@/components/Login.vue'
-  import Register from '@/components/Register.vue'
+  import Configurations from '@/components/Configurations.vue'
 
   export default {
     components: {
       InputGastos,
-      Login,
-      Register,
+      Configurations,
     },
 
     data: () => ({
@@ -61,3 +64,9 @@
     })
   }
 </script>
+
+<style scoped lang="scss">
+  :root {
+    min-height: 100%;
+  }
+</style>
