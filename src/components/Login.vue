@@ -32,17 +32,10 @@
         </v-btn>
       </v-row>
     </form>
-    <v-snackbar
-      v-model="snackbar.show"
-      :timeout="snackbar.timeout"
-    >
+    <v-snackbar v-model="snackbar.show" :timeout="snackbar.timeout">
       {{ snackbar.msg }}
       <template v-slot:action="{ attrs }">
-        <v-btn
-          text
-          v-bind="attrs"
-          @click="snackbar.show = false"
-        >
+        <v-btn text v-bind="attrs" @click="snackbar.show = false">
           OK
         </v-btn>
       </template>
@@ -51,10 +44,10 @@
 </template>
 
 <script>
-  import { validationMixin} from 'vuelidate'
-  import { required, email} from 'vuelidate/lib/validators'
+  import { validationMixin } from 'vuelidate'
+  import { required, email } from 'vuelidate/lib/validators'
 
-  export default{
+  export default {
     mixins: [validationMixin],
 
     data: () => ({
@@ -63,31 +56,34 @@
       snackbar: {
         msg: 'Erro ao realizar login',
         show: false,
-        timeout: 2000
-      }
+        timeout: 2000,
+      },
     }),
 
     methods: {
-      login: async function(){
+      login: async function() {
         this.$v.$touch()
-        if(this.$v.$invalid){
+        if (this.$v.$invalid) {
           return
         }
-        try{
-          await this.$store.dispatch('auth/login', { email: this.email, senha: this.senha })
-        }catch(err){
+        try {
+          await this.$store.dispatch('auth/login', {
+            email: this.email,
+            senha: this.senha,
+          })
+        } catch (err) {
           this.snackbar.show = true
           return
         }
         this.$router.push({
-          path: '/'
+          path: '/',
         })
-      }
+      },
     },
 
     validations: {
-      email: {required,email},
-      senha: {required},
+      email: { required, email },
+      senha: { required },
     },
 
     computed: {
@@ -104,9 +100,8 @@
         !this.$v.senha.required && errors.push('Insira a senha')
         return errors
       },
-    }
+    },
   }
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

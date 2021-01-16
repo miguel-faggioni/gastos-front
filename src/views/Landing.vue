@@ -10,19 +10,16 @@
 
 <script>
   export default {
-
     mounted() {
       let token = localStorage.getItem('token')
       if ('token' in localStorage && token !== undefined && token !== null) {
         this.$store.commit('auth/setToken', token)
         this.$router.push({
-          path: '/'
+          path: '/',
         })
       }
     },
-
   }
 </script>
 
-<style scoped lang="scss">
-</style>
+<style scoped lang="scss"></style>

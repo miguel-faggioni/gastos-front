@@ -32,7 +32,7 @@ const routes = [
       {
         path: '',
         component: Login,
-      }
+      },
     ],
   },
   {
@@ -50,7 +50,7 @@ const routes = [
     name: 'Home',
     meta: { requiresAuth: true },
     component: Home,
-  }
+  },
 ]
 
 const router = new VueRouter({
@@ -59,11 +59,12 @@ const router = new VueRouter({
 
 router.beforeEach((to, from, next) => {
   // redirect to Login if no authenticated, but route needs it
-  if( !Store.getters['auth/isAuthenticated'] &&
-      to.matched.some(record => record.meta.requiresAuth === true)
-    ){
+  if (
+    !Store.getters['auth/isAuthenticated'] &&
+    to.matched.some(record => record.meta.requiresAuth === true)
+  ) {
     return next({
-      name: 'Login'
+      name: 'Login',
     })
   }
 

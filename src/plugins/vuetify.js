@@ -13,7 +13,7 @@ export default new Vuetify({
         primary: colors.lightGreen.base,
         secondary: colors.lightGreen.lighten2,
         accent: colors.green.darken1,
-      }
-    }
-  }
+      },
+    },
+  },
 })

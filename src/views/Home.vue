@@ -28,23 +28,16 @@
     </v-tabs>
 
     <v-tabs-items v-model="activeTab">
-      <v-tab-item
-        value="tab-1"
-      >
-        <InputGastos/>
+      <v-tab-item value="tab-1">
+        <InputGastos />
       </v-tab-item>
-      <v-tab-item
-        value="tab-2"
-      >
-        <Configurations/>
+      <v-tab-item value="tab-2">
+        <Configurations />
       </v-tab-item>
-      <v-tab-item
-        value="tab-3"
-      >
-        <Configurations/>
+      <v-tab-item value="tab-3">
+        <Configurations />
       </v-tab-item>
     </v-tabs-items>
-
   </div>
 </template>
 
@@ -61,7 +54,7 @@
 
     data: () => ({
       activeTab: null,
-    })
+    }),
   }
 </script>
 

@@ -15,7 +15,7 @@ export default {
     // asynchronous
     async get(context) {
       let response = await axios.get('/categorias')
-      context.commit('set',response.data)
+      context.commit('set', response.data)
     },
   },
   modules: {},

@@ -108,7 +108,7 @@
         if (this.$v.$invalid) {
           return
         }
-        this.$store.dispatch('gasto/create',{
+        this.$store.dispatch('gasto/create', {
           valor: this.valor,
           categoria: this.categoria,
           pagamento: this.modoDePagamento,
@@ -134,7 +134,7 @@
     computed: {
       ...mapState({
         categorias: state => state.categoria.categorias,
-        modos: state => state.pagamento.modos
+        modos: state => state.pagamento.modos,
       }),
       valorErrors() {
         const errors = []
