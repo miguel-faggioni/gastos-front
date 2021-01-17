@@ -19,6 +19,14 @@ export default {
         state.gastos.splice(indexToRemove, 1)
       }
     },
+    update(state, updatedGasto) {
+      let indexToUpdate = state.gastos.findIndex(
+        gasto => gasto.id === updatedGasto.id
+      )
+      if (indexToUpdate !== -1) {
+        state.gastos.splice(indexToUpdate, 1, updatedGasto)
+      }
+    },
   },
   actions: {
     // asynchronous
@@ -68,12 +76,16 @@ export default {
       })
     },
     async update(context, { id, valor, data, categoria, pagamento }) {
-      return axios.put(`/gastos/${id}`, {
-        valor: valor,
-        data: data,
-        idCategoria: categoria.id,
-        idModoDePagamento: pagamento.id,
-      })
+      return axios
+        .put(`/gastos/${id}`, {
+          valor: valor,
+          data: data,
+          idCategoria: categoria.id,
+          idModoDePagamento: pagamento.id,
+        })
+        .then(response => {
+          context.commit('update', response.data)
+        })
     },
     async delete(context, { id }) {
       return axios.delete(`/gastos/${id}`).then(() => {
