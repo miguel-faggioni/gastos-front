@@ -7,6 +7,8 @@
     </v-tabs>
 
     <v-tabs-items v-model="activeTab">
+      <v-skeleton-loader v-show="loading" type="table"></v-skeleton-loader>
+
       <v-tab-item
         v-for="tabName in tabs"
         :key="tabName"
@@ -194,6 +196,7 @@
     mixins: [validationMixin],
 
     data: () => ({
+      loading: true,
       currency: 'R$',
       activeTab: null,
       gastosByMonth: {},
@@ -247,6 +250,7 @@
         this.$store.dispatch('pagamento/get'),
         this.$store.dispatch('gasto/get'),
       ])
+      this.loading = false
     },
 
     watch: {
