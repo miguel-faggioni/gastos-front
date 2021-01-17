@@ -27,6 +27,14 @@
     <v-btn
       class="mt-auto align-self-center"
       text
+      v-on:click="dialogs.about = true"
+    >
+      Sobre o aplicativo
+    </v-btn>
+
+    <v-btn
+      class="mt-5 align-self-center"
+      text
       color="error"
       v-on:click="logout()"
     >
@@ -176,15 +184,24 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <v-dialog v-model="dialogs.about">
+      <About />
+    </v-dialog>
   </v-container>
 </template>
 
 <script>
   import { validationMixin } from 'vuelidate'
   import { required } from 'vuelidate/lib/validators'
+  import About from '@/views/About.vue'
 
   export default {
     mixins: [validationMixin],
+
+    components: {
+      About,
+    },
 
     data: () => ({
       snackbar: {
@@ -200,6 +217,7 @@
         download: false,
         erase: false,
         eraseConfirmation: false,
+        about: false,
       },
       downloadDetails: {
         periodMenu: false,
