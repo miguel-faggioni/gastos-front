@@ -186,33 +186,6 @@
   export default {
     mixins: [validationMixin],
 
-    async beforeCreate() {
-      await Promise.all([
-        this.$store.dispatch('categoria/get'),
-        this.$store.dispatch('pagamento/get'),
-        this.$store.dispatch('gasto/get'),
-      ])
-      let currentYear = new Date().getFullYear()
-      // for each row received
-      this.gastos.forEach(gasto => {
-        let gastoDate = new Date(Number(gasto.data.unix_timestamp))
-        // split into buckets for each each month
-        let key = gastoDate.getMonthAbbreviation()
-        // if it's not from the current year, add the year to it
-        if (gasto.data.ano !== currentYear) {
-          key = key + '/' + String(gasto.data.ano)
-        }
-        this.gastosByMonth[key] = this.gastosByMonth[key] || []
-        this.gastosByMonth[key].push(gasto)
-        // if this is the first item of this month
-        if (this.tabs.indexOf(key) === -1) {
-          // add it to the tabs list
-          this.tabs.push(key)
-        }
-      })
-      this.activeTab = this.tabs[0]
-    },
-
     data: () => ({
       currency: 'R$',
       activeTab: null,
@@ -249,6 +222,41 @@
         delete: false,
       },
     }),
+
+    async beforeCreate() {
+      await Promise.all([
+        this.$store.dispatch('categoria/get'),
+        this.$store.dispatch('pagamento/get'),
+        this.$store.dispatch('gasto/get'),
+      ])
+      let currentYear = new Date().getFullYear()
+      // for each row received
+      this.gastos.forEach(gasto => {
+        let gastoDate = new Date(Number(gasto.data.unix_timestamp))
+        // split into buckets for each each month
+        let key = gastoDate.getMonthAbbreviation()
+        // if it's not from the current year, add the year to it
+        if (gasto.data.ano !== currentYear) {
+          key = key + '/' + String(gasto.data.ano)
+        }
+        this.gastosByMonth[key] = this.gastosByMonth[key] || []
+        this.gastosByMonth[key].push(gasto)
+        // if this is the first item of this month
+        if (this.tabs.indexOf(key) === -1) {
+          // add it to the tabs list
+          this.tabs.push(key)
+        }
+      })
+
+      // create the 1st tab for this month
+      let key = new Date().getMonthAbbreviation()
+      if (this.tabs.indexOf(key) === -1) {
+        this.tabs.push(key)
+        this.gastosByMonth[key] = this.gastosByMonth[key] || []
+      }
+
+      this.activeTab = this.tabs[0]
+    },
 
     computed: {
       ...mapState({
