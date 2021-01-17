@@ -27,6 +27,7 @@
           :items="gastosByMonth[tabName.replace('tab-', '')]"
           :search="search"
           multi-sort
+          :custom-filter="tableFilter"
           :footer-props="{
             showFirstLastPage: true,
           }"
@@ -39,7 +40,9 @@
           </template>
           <template v-slot:item.data="{ item }">
             {{ item.data.dia }} ({{
-              new Date().getDayOfWeekAbbreviation(item.data.dia_da_semana)
+              new Date()
+                .getDayOfWeekAbbreviation(item.data.dia_da_semana)
+                .substring(0, 3)
             }})
           </template>
           <template v-slot:item.actions="{ item }">
@@ -195,16 +198,27 @@
       activeTab: null,
       gastosByMonth: {},
       tabs: [],
-      search: '',
       tableHeaders: [
         {
           text: 'Valor',
           value: 'valor',
         },
-        { text: 'Categoria', value: 'categoria' },
-        { text: 'Dia', value: 'data' },
-        { text: 'Ações', value: 'actions', sortable: false, align: 'end' },
+        {
+          text: 'Categoria',
+          value: 'categoria',
+        },
+        {
+          text: 'Dia',
+          value: 'data',
+        },
+        {
+          text: 'Ações',
+          value: 'actions',
+          sortable: false,
+          align: 'end',
+        },
       ],
+      search: '',
       datetimepickerProps: {
         prependIcon: 'mdi-calendar',
       },
@@ -298,7 +312,10 @@
         gastos.forEach(gasto => {
           let gastoDate = new Date(Number(gasto.data.unix_timestamp))
           // split into buckets for each each month
-          let key = gastoDate.getMonthAbbreviation()
+          let key = gastoDate
+            .getMonthAbbreviation()
+            .toUpperCase()
+            .substring(0, 3)
           // if it's not from the current year, add the year to it
           if (gasto.data.ano !== currentYear) {
             key = key + '/' + String(gasto.data.ano)
@@ -313,11 +330,28 @@
         })
 
         // create the 1st tab for this month
-        let key = new Date().getMonthAbbreviation()
+        let key = new Date()
+          .getMonthAbbreviation()
+          .toUpperCase()
+          .substring(0, 3)
         if (this.tabs.indexOf(key) === -1) {
           this.tabs.push(key)
           this.gastosByMonth[key] = this.gastosByMonth[key] || []
         }
+      },
+
+      tableFilter(value, search, item) {
+        search = search.toLowerCase()
+        return (
+          String(item.valor).indexOf(search) !== -1 ||
+          item.categoria.sigla.toLowerCase().indexOf(search) !== -1 ||
+          item.categoria.nome.toLowerCase().indexOf(search) !== -1 ||
+          String(item.data.dia).indexOf(search) !== -1 ||
+          new Date()
+            .getDayOfWeekAbbreviation(item.data.dia_da_semana)
+            .toLowerCase()
+            .indexOf(search) !== -1
+        )
       },
 
       editItem(list, item) {

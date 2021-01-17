@@ -288,15 +288,38 @@
 
         const [year_0, month_0] = period[0].split('-')
         let date_0 = new Date(year_0, month_0 - 1)
-        let formatted = [date_0.getMonthAbbreviation() + '/' + year_0]
+        let formatted = [
+          date_0
+            .getMonthAbbreviation()
+            .toUpperCase()
+            .substring(0, 3) +
+            '/' +
+            year_0,
+        ]
         if (period.length > 1) {
           const [year_1, month_1] = period[1].split('-')
           let date_1 = new Date(year_1, month_1 - 1)
           // make sure the order stays correct
           if (date_0.getTime() < date_1.getTime()) {
-            formatted.push(date_1.getMonthAbbreviation() + '/' + year_1)
+            formatted.push(
+              date_1
+                .getMonthAbbreviation()
+                .toUpperCase()
+                .substring(0, 3) +
+                '/' +
+                year_1
+            )
           } else {
-            formatted.splice(0, 0, date_1.getMonthAbbreviation() + '/' + year_1)
+            formatted.splice(
+              0,
+              0,
+              date_1
+                .getMonthAbbreviation()
+                .toUpperCase()
+                .substring(0, 3) +
+                '/' +
+                year_1
+            )
           }
         }
         return formatted.join(' ~ ')

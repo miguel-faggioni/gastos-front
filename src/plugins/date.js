@@ -13,7 +13,7 @@ Date.prototype.getMonthAbbreviation = function() {
     'Novembro',
     'Dezembro',
   ]
-  return monthAbbreviations[this.getMonth()].substring(0, 3).toUpperCase()
+  return monthAbbreviations[this.getMonth()]
 }
 
 Date.prototype.getDayOfWeekAbbreviation = function(dayOfWeek) {
@@ -26,5 +26,5 @@ Date.prototype.getDayOfWeekAbbreviation = function(dayOfWeek) {
     'Sexta',
     'Sábado',
   ]
-  return daysOfWeek[dayOfWeek].substring(0, 3)
+  return daysOfWeek[dayOfWeek]
 }
