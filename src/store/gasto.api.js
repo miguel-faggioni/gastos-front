@@ -13,6 +13,12 @@ export default {
     push(state, gasto) {
       state.gastos.push(gasto)
     },
+    removeById(state, id) {
+      let indexToRemove = state.gastos.findIndex(gasto => gasto.id === id)
+      if (indexToRemove !== -1) {
+        state.gastos.splice(indexToRemove, 1)
+      }
+    },
   },
   actions: {
     // asynchronous
@@ -70,7 +76,9 @@ export default {
       })
     },
     async delete(context, { id }) {
-      return axios.delete(`/gastos/${id}`)
+      return axios.delete(`/gastos/${id}`).then(() => {
+        context.commit('removeById', id)
+      })
     },
   },
   modules: {},
