@@ -32,7 +32,7 @@
           }"
         >
           <template v-slot:item.valor="{ item }">
-            {{ currency }} {{ item.valor }}
+            {{ currency }} {{ item.valor | formatCurrency }}
           </template>
           <template v-slot:item.categoria="{ item }">
             {{ item.categoria.sigla }}
@@ -65,6 +65,7 @@
       </v-tab-item>
     </v-tabs-items>
 
+    <!-- dialog to edit row -->
     <v-dialog v-model="dialogs.delete">
       <v-card>
         <v-card-title>
@@ -86,7 +87,9 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- end of dialog to edit row -->
 
+    <!-- dialog to remove row -->
     <v-dialog v-model="dialogs.edit">
       <v-card>
         <v-card-title>
@@ -175,6 +178,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <!-- end of dialog to remove row -->
   </v-container>
 </template>
 
@@ -229,33 +233,12 @@
         this.$store.dispatch('pagamento/get'),
         this.$store.dispatch('gasto/get'),
       ])
-      let currentYear = new Date().getFullYear()
-      // for each row received
-      this.gastos.forEach(gasto => {
-        let gastoDate = new Date(Number(gasto.data.unix_timestamp))
-        // split into buckets for each each month
-        let key = gastoDate.getMonthAbbreviation()
-        // if it's not from the current year, add the year to it
-        if (gasto.data.ano !== currentYear) {
-          key = key + '/' + String(gasto.data.ano)
-        }
-        this.gastosByMonth[key] = this.gastosByMonth[key] || []
-        this.gastosByMonth[key].push(gasto)
-        // if this is the first item of this month
-        if (this.tabs.indexOf(key) === -1) {
-          // add it to the tabs list
-          this.tabs.push(key)
-        }
-      })
+    },
 
-      // create the 1st tab for this month
-      let key = new Date().getMonthAbbreviation()
-      if (this.tabs.indexOf(key) === -1) {
-        this.tabs.push(key)
-        this.gastosByMonth[key] = this.gastosByMonth[key] || []
-      }
-
-      this.activeTab = this.tabs[0]
+    watch: {
+      gastos(newValue) {
+        this.parseGastos(newValue)
+      },
     },
 
     computed: {
@@ -305,6 +288,38 @@
     },
 
     methods: {
+      parseGastos(gastos) {
+        // clear values
+        this.tabs = []
+        this.gastosByMonth = {}
+
+        let currentYear = new Date().getFullYear()
+        // for each row received
+        gastos.forEach(gasto => {
+          let gastoDate = new Date(Number(gasto.data.unix_timestamp))
+          // split into buckets for each each month
+          let key = gastoDate.getMonthAbbreviation()
+          // if it's not from the current year, add the year to it
+          if (gasto.data.ano !== currentYear) {
+            key = key + '/' + String(gasto.data.ano)
+          }
+          this.gastosByMonth[key] = this.gastosByMonth[key] || []
+          this.gastosByMonth[key].push(gasto)
+          // if this is the first item of this month
+          if (this.tabs.indexOf(key) === -1) {
+            // add it to the tabs list
+            this.tabs.push(key)
+          }
+        })
+
+        // create the 1st tab for this month
+        let key = new Date().getMonthAbbreviation()
+        if (this.tabs.indexOf(key) === -1) {
+          this.tabs.push(key)
+          this.gastosByMonth[key] = this.gastosByMonth[key] || []
+        }
+      },
+
       editItem(list, item) {
         this.$v.$reset()
         this.editedIndex = list.indexOf(item)
@@ -344,6 +359,14 @@
         })
         this.dialogs.edit = false
         this.dialogs.delete = false
+      },
+    },
+
+    filters: {
+      formatCurrency: function(value) {
+        if (!value) return '0.00'
+        let val = (value / 1).toFixed(2)
+        return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       },
     },
   }

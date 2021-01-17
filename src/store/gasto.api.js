@@ -10,6 +10,9 @@ export default {
     set(state, gastos) {
       state.gastos = gastos
     },
+    push(state, gasto) {
+      state.gastos.push(gasto)
+    },
   },
   actions: {
     // asynchronous
@@ -18,12 +21,16 @@ export default {
       context.commit('set', response.data)
     },
     async create(context, { valor, data, categoria, pagamento }) {
-      return axios.post('/gastos', {
-        valor: valor,
-        data: data,
-        idCategoria: categoria.id,
-        idModoDePagamento: pagamento.id,
-      })
+      return axios
+        .post('/gastos', {
+          valor: valor,
+          data: data,
+          idCategoria: categoria.id,
+          idModoDePagamento: pagamento.id,
+        })
+        .then(response => {
+          context.commit('push', response.data)
+        })
     },
     async deleteAll(context) {
       return axios.delete('/gastos').then(() => {
