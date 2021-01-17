@@ -6,6 +6,10 @@ Vue.use(VueAxios, axios)
 //axios.defaults.baseURL = process.env.VUE_APP_API_URL || ''
 axios.defaults.baseURL = 'https://api.coisa.online:5001/'
 
+/* *
+axios.defaults.baseURL = 'https://localhost:5001/'
+/* */
+
 axios.interceptors.request.use(
   config => {
     // Do something before request is sent

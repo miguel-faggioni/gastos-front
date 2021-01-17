@@ -30,8 +30,29 @@ export default {
         context.commit('set', [])
       })
     },
-    async downloadAll(context, { format }) {
-      return axios.get(`/gastos/download/${format}`)
+    async downloadAll(context, { format, startDate, endDate }) {
+      let params = {}
+
+      if (startDate !== undefined) {
+        params['startDate'] = startDate
+      }
+      if (endDate !== undefined) {
+        params['endDate'] = endDate
+      }
+
+      return axios({
+        url: `/gastos/download/${format}`,
+        method: 'get',
+        responseType: 'blob',
+        params: params,
+      }).then(response => {
+        const blob = new Blob([response.data])
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.download = 'Gastos.' + format
+        link.click()
+        URL.revokeObjectURL(link.href)
+      })
     },
     async update(context, { id, valor, data, categoria, pagamento }) {
       return axios.put(`/gastos/${id}`, {

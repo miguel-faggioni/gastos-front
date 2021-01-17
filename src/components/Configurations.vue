@@ -51,13 +51,11 @@
               v-model="downloadDetails.periodMenu"
               :close-on-content-click="false"
               transition="scale-transition"
-              :return-value.sync="downloadDetails.period"
               offset-y
               min-width="auto"
             >
               <template v-slot:activator="{ on, attrs }">
                 <v-text-field
-                  disabled
                   class="pt-8"
                   label="Período a ser baixado"
                   v-model="downloadDetails.formattedPeriod"
@@ -75,7 +73,6 @@
               <v-date-picker
                 range
                 ref="picker"
-                clearText="Limpar"
                 v-model="downloadDetails.period"
                 locale="pt-BR"
                 type="month"
@@ -233,10 +230,32 @@
           return
         }
         this.loading.downloadData = true
+        let parameters = {
+          format: this.downloadDetails.format,
+        }
+        if (this.downloadDetails.period !== null) {
+          if (this.downloadDetails.period[0] !== undefined) {
+            let [
+              start_year,
+              start_month,
+            ] = this.downloadDetails.period[0].split('-')
+            parameters['startDate'] = new Date(
+              start_year,
+              start_month - 1
+            ).toISOString()
+          }
+          if (this.downloadDetails.period[1] !== undefined) {
+            let [end_year, end_month] = this.downloadDetails.period[1].split(
+              '-'
+            )
+            parameters['endDate'] = new Date(
+              end_year,
+              end_month - 1
+            ).toISOString()
+          }
+        }
         try {
-          await this.$store.dispatch('gasto/downloadAll', {
-            format: this.downloadDetails.format,
-          })
+          await this.$store.dispatch('gasto/downloadAll', parameters)
         } catch (err) {
           this.snackbar.msg = 'Erro ao tentar baixar gastos'
           this.snackbar.show = true
