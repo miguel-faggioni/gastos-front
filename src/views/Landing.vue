@@ -1,10 +1,13 @@
 <template>
-  <div>
-    <router-link to="/welcome/login">Login</router-link> |
-    <router-link to="/welcome/register">Cadastrar-se</router-link> |
-    <router-link to="/welcome/about">Sobre o projeto</router-link>
+  <div class="d-flex flex-column primary lighten-3" id="landing">
+    <v-container class="d-flex justify-space-between">
+      <router-link to="/welcome/login">Login</router-link> |
+      <router-link to="/welcome/register">Cadastrar-se</router-link> |
+      <router-link to="/welcome/about">Sobre o projeto</router-link> |
+      <router-link to="/welcome/feedback">Fale conosco</router-link>
+    </v-container>
 
-    <router-view></router-view>
+    <router-view class="my-auto px-10"></router-view>
   </div>
 </template>
 
@@ -22,4 +25,8 @@
   }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  #landing {
+    height: 100%;
+  }
+</style>

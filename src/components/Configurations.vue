@@ -186,7 +186,9 @@
     </v-dialog>
 
     <v-dialog v-model="dialogs.about">
-      <About />
+      <v-card>
+        <About />
+      </v-card>
     </v-dialog>
   </v-container>
 </template>

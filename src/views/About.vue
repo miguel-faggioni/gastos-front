@@ -1,12 +1,12 @@
 <template>
-  <v-card>
+  <v-container>
     <v-card-title>{{ title }}</v-card-title>
     <v-card-text>
       <p v-for="row in text" :key="row">
         {{ row }}
       </p>
     </v-card-text>
-  </v-card>
+  </v-container>
 </template>
 
 <script>
