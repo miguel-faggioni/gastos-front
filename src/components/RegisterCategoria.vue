@@ -6,7 +6,7 @@
           <v-row>
             <v-col>
               <v-text-field
-                label="Nome do modo de pagamento"
+                label="Nome do categoria"
                 v-model="nome"
                 ref="nome"
                 required
@@ -66,7 +66,7 @@
           :loading="loading"
           :disabled="loading"
         >
-          Criar modo de pagamento
+          Criar categoria
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -80,7 +80,7 @@
 
   export default {
     mixins: [validationMixin],
-    name: 'RegisterModoDePagamento',
+    name: 'RegisterCategoria',
 
     props: ['show'],
 
@@ -99,7 +99,7 @@
           return
         }
         this.loading = true
-        await this.$store.dispatch('pagamento/create', {
+        await this.$store.dispatch('categoria/create', {
           nome: this.nome,
           sigla: this.sigla,
           icone: this.icone,
@@ -134,7 +134,7 @@
 
     computed: {
       ...mapState({
-        validIcons: state => state.pagamento.icones,
+        validIcons: state => state.categoria.icones,
       }),
       nomeErrors() {
         const errors = []

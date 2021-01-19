@@ -28,7 +28,18 @@
             @input="$v.categoria.$touch()"
             @blur="$v.categoria.$touch()"
             v-on:keyup.enter="$refs.modo.focus()"
-          ></v-select>
+          >
+            <template v-slot:prepend-item>
+              <v-list-item ripple @click="dialogs.registerCategoria = true">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Nova categoria
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider class="mt-2"></v-divider>
+            </template>
+          </v-select>
         </v-col>
       </v-row>
       <v-row>
@@ -62,7 +73,10 @@
             @blur="$v.modoDePagamento.$touch()"
           >
             <template v-slot:prepend-item>
-              <v-list-item ripple @click="showDialogModoDePagamento()">
+              <v-list-item
+                ripple
+                @click="dialogs.registerModoDePagamento = true"
+              >
                 <v-list-item-content>
                   <v-list-item-title>
                     Novo modo de pagamento
@@ -84,6 +98,8 @@
     <RegisterModoDePagamento
       v-bind:show.sync="dialogs.registerModoDePagamento"
     />
+
+    <RegisterCategoria v-bind:show.sync="dialogs.registerCategoria" />
   </v-container>
 </template>
 
@@ -92,12 +108,14 @@
   import { required, decimal } from 'vuelidate/lib/validators'
   import { mapState } from 'vuex'
   import RegisterModoDePagamento from '@/components/RegisterModoDePagamento.vue'
+  import RegisterCategoria from '@/components/RegisterCategoria.vue'
 
   export default {
     mixins: [validationMixin],
     name: 'InputGastos',
     components: {
       RegisterModoDePagamento,
+      RegisterCategoria,
     },
 
     async beforeCreate() {
@@ -123,6 +141,7 @@
       },
       dialogs: {
         registerModoDePagamento: false,
+        registerCategoria: false,
       },
     }),
 
@@ -144,9 +163,6 @@
       limpar: function() {
         this.$v.$reset()
         this.valor = null
-      },
-      showDialogModoDePagamento: function() {
-        this.dialogs.registerModoDePagamento = true
       },
     },
 
