@@ -20,6 +20,7 @@
             :items="categorias"
             label="Categoria"
             v-model="categoria"
+            :prepend-icon="icons.categoria"
             return-object
             item-text="nome"
             required
@@ -65,7 +66,7 @@
             v-model="modoDePagamento"
             return-object
             item-text="nome"
-            prepend-icon="credit_card"
+            :prepend-icon="icons.modoDePagamento"
             required
             ref="modo"
             :error-messages="modoErrors"
@@ -143,7 +144,20 @@
         registerModoDePagamento: false,
         registerCategoria: false,
       },
+      icons: {
+        modoDePagamento: 'credit_card',
+        categoria: 'mdi-card-text-outline',
+      },
     }),
+
+    watch: {
+      categoria(newValue) {
+        this.icons.categoria = newValue.icone
+      },
+      modoDePagamento(newValue) {
+        this.icons.modoDePagamento = newValue.icone
+      },
+    },
 
     methods: {
       inserir: function() {
