@@ -60,7 +60,18 @@
             :error-messages="modoErrors"
             @input="$v.modoDePagamento.$touch()"
             @blur="$v.modoDePagamento.$touch()"
-          ></v-select>
+          >
+            <template v-slot:prepend-item>
+              <v-list-item ripple @click="showDialogModoDePagamento()">
+                <v-list-item-content>
+                  <v-list-item-title>
+                    Novo modo de pagamento
+                  </v-list-item-title>
+                </v-list-item-content>
+              </v-list-item>
+              <v-divider class="mt-2"></v-divider>
+            </template>
+          </v-select>
         </v-col>
         <v-col>
           <v-btn block v-on:click="inserir()" color="primary">
@@ -69,6 +80,10 @@
         </v-col>
       </v-row>
     </form>
+
+    <RegisterModoDePagamento
+      v-bind:show.sync="dialogs.registerModoDePagamento"
+    />
   </v-container>
 </template>
 
@@ -76,10 +91,14 @@
   import { validationMixin } from 'vuelidate'
   import { required, decimal } from 'vuelidate/lib/validators'
   import { mapState } from 'vuex'
+  import RegisterModoDePagamento from '@/components/RegisterModoDePagamento.vue'
 
   export default {
     mixins: [validationMixin],
     name: 'InputGastos',
+    components: {
+      RegisterModoDePagamento,
+    },
 
     async beforeCreate() {
       await Promise.all([
@@ -102,6 +121,9 @@
       dpProps: {
         locale: 'pt-BR',
       },
+      dialogs: {
+        registerModoDePagamento: false,
+      },
     }),
 
     methods: {
@@ -122,7 +144,9 @@
       limpar: function() {
         this.$v.$reset()
         this.valor = null
-        // this.data = new Date()
+      },
+      showDialogModoDePagamento: function() {
+        this.dialogs.registerModoDePagamento = true
       },
     },
 
