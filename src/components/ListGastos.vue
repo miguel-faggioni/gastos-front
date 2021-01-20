@@ -38,6 +38,7 @@
             {{ currency }} {{ item.valor | formatCurrency }}
           </template>
           <template v-slot:item.categoria="{ item }">
+            <v-icon>{{ item.categoria.icone }}</v-icon>
             {{ item.categoria.sigla }}
           </template>
           <template v-slot:item.data="{ item }">
@@ -70,7 +71,7 @@
       </v-tab-item>
     </v-tabs-items>
 
-    <!-- dialog to edit row -->
+    <!-- dialog to delete row -->
     <v-dialog v-model="dialogs.delete">
       <v-card>
         <v-card-title>
@@ -92,89 +93,20 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- end of dialog to edit row -->
+    <!-- end of dialog to remove row -->
 
-    <!-- dialog to remove row -->
+    <!-- dialog to edit row -->
     <v-dialog v-model="dialogs.edit">
       <v-card>
         <v-card-title>
           <span class="headline">Editar gasto</span>
         </v-card-title>
         <v-card-text>
-          <form>
-            <v-row>
-              <v-col>
-                <v-text-field
-                  label="Valor"
-                  prefix="R$"
-                  v-model="editedItem.valor"
-                  required
-                  :error-messages="valorErrors"
-                  @input="$v.editedItem.valor.$touch()"
-                  @blur="$v.editedItem.valor.$touch()"
-                  ref="valor"
-                  v-on:keyup.enter="$refs.categoria.focus()"
-                ></v-text-field>
-              </v-col>
-              <v-col>
-                <v-select
-                  :items="categorias"
-                  label="Categoria"
-                  v-model="editedItem.categoria"
-                  return-object
-                  item-text="nome"
-                  required
-                  ref="categoria"
-                  :error-messages="categoriaErrors"
-                  @input="$v.editedItem.categoria.$touch()"
-                  @blur="$v.editedItem.categoria.$touch()"
-                  v-on:keyup.enter="$refs.modo.focus()"
-                ></v-select>
-              </v-col>
-            </v-row>
-            <v-row>
-              <v-col>
-                <v-datetime-picker
-                  label="Data"
-                  v-model="editedItem.date"
-                  dateFormat="dd/MM/yyyy"
-                  timeFormat="HH'h'mm"
-                  clearText="Limpar"
-                  :text-field-props="datetimepickerProps"
-                  :time-picker-props="tpProps"
-                  :date-picker-props="dpProps"
-                  required
-                  :error-messages="dataErrors"
-                  @input="$v.editedItem.data.$touch()"
-                  @blur="$v.editedItem.data.$touch()"
-                ></v-datetime-picker>
-
-                <v-select
-                  :items="modos"
-                  label="Modo de pagamento"
-                  v-model="editedItem.modo_de_pagamento"
-                  return-object
-                  item-text="nome"
-                  prepend-icon="credit_card"
-                  required
-                  ref="modo"
-                  :error-messages="modoErrors"
-                  @input="$v.editedItem.modo_de_pagamento.$touch()"
-                  @blur="$v.editedItem.modo_de_pagamento.$touch()"
-                ></v-select>
-              </v-col>
-              <v-col>
-                <v-btn
-                  block
-                  v-on:click="finishEditItem()"
-                  color="primary"
-                  class="full-height"
-                >
-                  Salvar gasto
-                </v-btn>
-              </v-col>
-            </v-row>
-          </form>
+          <InputGastos
+            class="pa-0"
+            v-bind:gasto.sync="editedItem"
+            v-on:update:show="dialogs.edit = $event"
+          />
         </v-card-text>
         <v-card-actions>
           <v-btn color="error" text @click="dialogs.delete = true">
@@ -183,7 +115,7 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
-    <!-- end of dialog to remove row -->
+    <!-- end of dialog to edit row -->
   </v-container>
 </template>
 
@@ -191,9 +123,13 @@
   import { validationMixin } from 'vuelidate'
   import { required, decimal } from 'vuelidate/lib/validators'
   import { mapState } from 'vuex'
+  import InputGastos from '@/components/InputGastos.vue'
 
   export default {
     mixins: [validationMixin],
+    components: {
+      InputGastos,
+    },
 
     data: () => ({
       loading: true,
@@ -361,13 +297,13 @@
       editItem(list, item) {
         this.$v.$reset()
         this.editedIndex = list.indexOf(item)
+        this.dialogs.edit = true
         this.editedItem = Object.assign(
           {
             date: new Date(Number(item.data.unix_timestamp)),
           },
           item
         )
-        this.dialogs.edit = true
       },
 
       deleteItem(list, item) {

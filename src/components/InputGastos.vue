@@ -6,11 +6,11 @@
           <v-text-field
             label="Valor"
             prefix="R$"
-            v-model="valor"
+            v-model="gasto.valor"
             required
             :error-messages="valorErrors"
-            @input="$v.valor.$touch()"
-            @blur="$v.valor.$touch()"
+            @input="$v.gasto.valor.$touch()"
+            @blur="$v.gasto.valor.$touch()"
             ref="valor"
             v-on:keyup.enter="$refs.categoria.focus()"
           ></v-text-field>
@@ -19,15 +19,15 @@
           <v-select
             :items="categorias"
             label="Categoria"
-            v-model="categoria"
+            v-model="gasto.categoria"
             :prepend-icon="icons.categoria"
             return-object
             item-text="nome"
             required
             ref="categoria"
             :error-messages="categoriaErrors"
-            @input="$v.categoria.$touch()"
-            @blur="$v.categoria.$touch()"
+            @input="$v.gasto.categoria.$touch()"
+            @blur="$v.gasto.categoria.$touch()"
             v-on:keyup.enter="$refs.modo.focus()"
           >
             <template v-slot:prepend-item>
@@ -47,7 +47,7 @@
         <v-col>
           <v-datetime-picker
             label="Data"
-            v-model="data"
+            v-model="gasto.date"
             dateFormat="dd/MM/yyyy"
             timeFormat="HH'h'mm"
             clearText="Limpar"
@@ -56,22 +56,22 @@
             :date-picker-props="dpProps"
             required
             :error-messages="dataErrors"
-            @input="$v.data.$touch()"
-            @blur="$v.data.$touch()"
+            @input="$v.gasto.date.$touch()"
+            @blur="$v.gasto.date.$touch()"
           ></v-datetime-picker>
 
           <v-select
             :items="modos"
             label="Modo de pagamento"
-            v-model="modoDePagamento"
+            v-model="gasto.modo_de_pagamento"
             return-object
             item-text="nome"
-            :prepend-icon="icons.modoDePagamento"
+            :prepend-icon="icons.modo_de_pagamento"
             required
             ref="modo"
             :error-messages="modoErrors"
-            @input="$v.modoDePagamento.$touch()"
-            @blur="$v.modoDePagamento.$touch()"
+            @input="$v.gasto.modo_de_pagamento.$touch()"
+            @blur="$v.gasto.modo_de_pagamento.$touch()"
           >
             <template v-slot:prepend-item>
               <v-list-item
@@ -89,8 +89,8 @@
           </v-select>
         </v-col>
         <v-col>
-          <v-btn block v-on:click="inserir()" color="primary">
-            Inserir gasto
+          <v-btn block v-on:click="salvar()" color="primary">
+            Salvar gasto
           </v-btn>
         </v-col>
       </v-row>
@@ -126,11 +126,21 @@
       ])
     },
 
+    props: {
+      gasto: {
+        type: Object,
+        default: function() {
+          return {
+            valor: null,
+            categoria: null,
+            modo_de_pagamento: null,
+            date: new Date(),
+          }
+        },
+      },
+    },
+
     data: () => ({
-      valor: null,
-      categoria: null,
-      modoDePagamento: null,
-      data: new Date(),
       datetimepickerProps: {
         prependIcon: 'mdi-calendar',
       },
@@ -145,46 +155,59 @@
         registerCategoria: false,
       },
       icons: {
-        modoDePagamento: 'credit_card',
+        modo_de_pagamento: 'credit_card',
         categoria: 'mdi-card-text-outline',
       },
     }),
 
     watch: {
-      categoria(newValue) {
+      'gasto.categoria'(newValue) {
         this.icons.categoria = newValue.icone
       },
-      modoDePagamento(newValue) {
-        this.icons.modoDePagamento = newValue.icone
+      'gasto.modo_de_pagamento'(newValue) {
+        this.icons.modo_de_pagamento = newValue.icone
       },
     },
 
     methods: {
-      inserir: function() {
-        this.$v.$touch()
-        if (this.$v.$invalid) {
+      salvar: async function() {
+        this.$v.gasto.$touch()
+        if (this.$v.gasto.$invalid) {
           return
         }
-        this.$store.dispatch('gasto/create', {
-          valor: this.valor,
-          categoria: this.categoria,
-          pagamento: this.modoDePagamento,
-          data: this.data,
-        })
-        this.limpar()
-        this.$refs.valor.focus()
+        if (this.gasto.id !== null && this.gasto.id !== undefined) {
+          await this.$store.dispatch('gasto/update', {
+            id: this.gasto.id,
+            valor: this.gasto.valor,
+            categoria: this.gasto.categoria,
+            pagamento: this.gasto.modo_de_pagamento,
+            data: this.gasto.date,
+          })
+        } else {
+          await this.$store.dispatch('gasto/create', {
+            valor: this.gasto.valor,
+            categoria: this.gasto.categoria,
+            pagamento: this.gasto.modo_de_pagamento,
+            data: this.gasto.date,
+          })
+          this.limpar()
+          this.$refs.valor.focus()
+        }
+        this.$emit('update:show', false)
       },
       limpar: function() {
-        this.$v.$reset()
-        this.valor = null
+        this.$v.gasto.$reset()
+        this.gasto.valor = null
       },
     },
 
     validations: {
-      valor: { required, decimal },
-      categoria: { required },
-      modoDePagamento: { required },
-      data: { required },
+      gasto: {
+        valor: { required, decimal },
+        categoria: { required },
+        modo_de_pagamento: { required },
+        date: { required },
+      },
     },
 
     computed: {
@@ -194,28 +217,29 @@
       }),
       valorErrors() {
         const errors = []
-        if (!this.$v.valor.$dirty) return errors
-        !this.$v.valor.required && errors.push('Insira um valor')
-        !this.$v.valor.decimal &&
+        if (!this.$v.gasto.valor.$dirty) return errors
+        !this.$v.gasto.valor.required && errors.push('Insira um valor')
+        !this.$v.gasto.valor.decimal &&
           errors.push('O valor deve seguir o formato 1234.56')
         return errors
       },
       categoriaErrors() {
         const errors = []
-        if (!this.$v.categoria.$dirty) return errors
-        !this.$v.categoria.required && errors.push('Selecione uma categoria')
+        if (!this.$v.gasto.categoria.$dirty) return errors
+        !this.$v.gasto.categoria.required &&
+          errors.push('Selecione uma categoria')
         return errors
       },
       dataErrors() {
         const errors = []
-        if (!this.$v.data.$dirty) return errors
-        !this.$v.data.required && errors.push('Selecione uma data')
+        if (!this.$v.gasto.date.$dirty) return errors
+        !this.$v.gasto.date.required && errors.push('Selecione uma data')
         return errors
       },
       modoErrors() {
         const errors = []
-        if (!this.$v.modoDePagamento.$dirty) return errors
-        !this.$v.modoDePagamento.required &&
+        if (!this.$v.gasto.modo_de_pagamento.$dirty) return errors
+        !this.$v.gasto.modo_de_pagamento.required &&
           errors.push('Selecione um modo de pagamento')
         return errors
       },
