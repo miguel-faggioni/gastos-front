@@ -42,11 +42,7 @@
             {{ item.categoria.sigla }}
           </template>
           <template v-slot:item.data="{ item }">
-            {{ item.data.dia }} ({{
-              new Date()
-                .getDayOfWeekAbbreviation(item.data.dia_da_semana)
-                .substring(0, 3)
-            }})
+            {{ item.data | formatDate }}
           </template>
           <template v-slot:item.actions="{ item }">
             <v-icon
@@ -251,14 +247,15 @@
         // for each row received
         gastos.forEach(gasto => {
           let gastoDate = new Date(Number(gasto.data.unix_timestamp))
+          gasto.date = gastoDate
           // split into buckets for each each month
           let key = gastoDate
             .getMonthAbbreviation()
             .toUpperCase()
             .substring(0, 3)
           // if it's not from the current year, add the year to it
-          if (gasto.data.ano !== currentYear) {
-            key = key + '/' + String(gasto.data.ano)
+          if (gastoDate.getFullYear() !== currentYear) {
+            key = key + '/' + String(gastoDate.getFullYear())
           }
           this.gastosByMonth[key] = this.gastosByMonth[key] || []
           this.gastosByMonth[key].push(gasto)
@@ -286,9 +283,9 @@
           String(item.valor).indexOf(search) !== -1 ||
           item.categoria.sigla.toLowerCase().indexOf(search) !== -1 ||
           item.categoria.nome.toLowerCase().indexOf(search) !== -1 ||
-          String(item.data.dia).indexOf(search) !== -1 ||
-          new Date()
-            .getDayOfWeekAbbreviation(item.data.dia_da_semana)
+          String(item.date.getDate()).indexOf(search) !== -1 ||
+          item.date
+            .getDayOfWeekAbbreviation(item.date.getDay())
             .toLowerCase()
             .indexOf(search) !== -1
         )
@@ -341,6 +338,13 @@
         if (!value) return '0.00'
         let val = (value / 1).toFixed(2)
         return val.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      },
+      formatDate: function(value) {
+        if (!value) return 'Sem data'
+        let val = new Date(Number(value.unix_timestamp))
+        return `${val.getDate()} (${val
+          .getDayOfWeekAbbreviation(val.getDay())
+          .substring(0, 3)})`
       },
     },
   }
