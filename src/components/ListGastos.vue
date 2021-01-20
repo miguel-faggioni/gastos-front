@@ -28,7 +28,6 @@
           :headers="tableHeaders"
           :items="gastosByMonth[tabName.replace('tab-', '')]"
           :search="search"
-          multi-sort
           :custom-filter="tableFilter"
           :footer-props="{
             showFirstLastPage: true,
@@ -141,10 +140,16 @@
         {
           text: 'Categoria',
           value: 'categoria',
+          sort: (a, b) => {
+            return ('' + a.sigla).localeCompare(b.sigla)
+          },
         },
         {
           text: 'Dia',
           value: 'data',
+          sort: (a, b) => {
+            return a.unix_timestamp - b.unix_timestamp
+          },
         },
         {
           text: 'Ações',
