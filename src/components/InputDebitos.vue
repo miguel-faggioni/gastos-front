@@ -30,7 +30,8 @@
             @blur="$v.debito.categoria.$touch()"
             v-on:keyup.enter="$refs.modo.focus()"
           >
-            <template v-slot:prepend-item>
+            <template v-slot:append-item>
+              <v-divider class="mb-2"></v-divider>
               <v-list-item ripple @click="dialogs.registerCategoria = true">
                 <v-list-item-content>
                   <v-list-item-title>
@@ -38,7 +39,6 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-divider class="mt-2"></v-divider>
             </template>
           </v-select>
         </v-col>
@@ -70,7 +70,8 @@
             @input="$v.debito.modo_de_pagamento.$touch()"
             @blur="$v.debito.modo_de_pagamento.$touch()"
           >
-            <template v-slot:prepend-item>
+            <template v-slot:append-item>
+              <v-divider class="mb-2"></v-divider>
               <v-list-item ripple @click="dialogs.registerModoDePagamento = true">
                 <v-list-item-content>
                   <v-list-item-title>
@@ -78,7 +79,6 @@
                   </v-list-item-title>
                 </v-list-item-content>
               </v-list-item>
-              <v-divider class="mt-2"></v-divider>
             </template>
           </v-select>
         </v-col>
