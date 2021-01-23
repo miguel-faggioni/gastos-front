@@ -27,7 +27,9 @@
         <ListGastos />
       </v-tab-item>
       <v-tab-item value="tab-2">
-        <Configurations />
+        <InputDebitos />
+        <v-divider></v-divider>
+        <ListDebitos />
       </v-tab-item>
       <v-tab-item value="tab-3">
         <Configurations />
@@ -40,12 +42,16 @@
   // @ is an alias to /src
   import InputGastos from '@/components/InputGastos.vue'
   import ListGastos from '@/components/ListGastos.vue'
+  import InputDebitos from '@/components/InputDebitos.vue'
+  import ListDebitos from '@/components/ListDebitos.vue'
   import Configurations from '@/components/Configurations.vue'
 
   export default {
     components: {
       InputGastos,
       ListGastos,
+      InputDebitos,
+      ListDebitos,
       Configurations,
     },
 
