@@ -7,5 +7,13 @@ module.exports = {
         args[0].title = 'Gestão de gastos'
         return args
       })
+  },
+  configureWebpack:{
+    optimization: {
+      splitChunks: {
+        minSize: 10000,
+        maxSize: 250000,
+      }
+    }
   }
 }

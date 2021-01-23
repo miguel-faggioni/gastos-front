@@ -5,6 +5,8 @@
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
+    "deploy": "aws s3 cp dist/ s3://anotar.coisa.online/ --recursive",
+    "postdeploy": "aws cloudfront create-invalidation --distribution-id EYSHIAOAERFMG --paths '/*'",
     "lint": "yarn lint:eslint && yarn lint:prettier",
     "lint:eslint": "eslint \"**/*.*\"",
     "lint:prettier": "prettier --check \"**/*.*\"",
