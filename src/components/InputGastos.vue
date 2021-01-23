@@ -74,10 +74,7 @@
             @blur="$v.gasto.modo_de_pagamento.$touch()"
           >
             <template v-slot:prepend-item>
-              <v-list-item
-                ripple
-                @click="dialogs.registerModoDePagamento = true"
-              >
+              <v-list-item ripple @click="dialogs.registerModoDePagamento = true">
                 <v-list-item-content>
                   <v-list-item-title>
                     Novo modo de pagamento
@@ -96,9 +93,7 @@
       </v-row>
     </form>
 
-    <RegisterModoDePagamento
-      v-bind:show.sync="dialogs.registerModoDePagamento"
-    />
+    <RegisterModoDePagamento v-bind:show.sync="dialogs.registerModoDePagamento" />
 
     <RegisterCategoria v-bind:show.sync="dialogs.registerCategoria" />
   </v-container>
@@ -219,15 +214,13 @@
         const errors = []
         if (!this.$v.gasto.valor.$dirty) return errors
         !this.$v.gasto.valor.required && errors.push('Insira um valor')
-        !this.$v.gasto.valor.decimal &&
-          errors.push('O valor deve seguir o formato 1234.56')
+        !this.$v.gasto.valor.decimal && errors.push('O valor deve seguir o formato 1234.56')
         return errors
       },
       categoriaErrors() {
         const errors = []
         if (!this.$v.gasto.categoria.$dirty) return errors
-        !this.$v.gasto.categoria.required &&
-          errors.push('Selecione uma categoria')
+        !this.$v.gasto.categoria.required && errors.push('Selecione uma categoria')
         return errors
       },
       dataErrors() {
@@ -239,8 +232,7 @@
       modoErrors() {
         const errors = []
         if (!this.$v.gasto.modo_de_pagamento.$dirty) return errors
-        !this.$v.gasto.modo_de_pagamento.required &&
-          errors.push('Selecione um modo de pagamento')
+        !this.$v.gasto.modo_de_pagamento.required && errors.push('Selecione um modo de pagamento')
         return errors
       },
     },

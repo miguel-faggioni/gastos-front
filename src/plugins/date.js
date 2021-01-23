@@ -17,14 +17,6 @@ Date.prototype.getMonthAbbreviation = function() {
 }
 
 Date.prototype.getDayOfWeekAbbreviation = function(dayOfWeek) {
-  let daysOfWeek = [
-    'Domingo',
-    'Segunda',
-    'Terça',
-    'Quarta',
-    'Quinta',
-    'Sexta',
-    'Sábado',
-  ]
+  let daysOfWeek = ['Domingo', 'Segunda', 'Terça', 'Quarta', 'Quinta', 'Sexta', 'Sábado']
   return daysOfWeek[dayOfWeek]
 }

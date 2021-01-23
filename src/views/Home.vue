@@ -1,12 +1,6 @@
 <template>
   <div>
-    <v-tabs
-      v-model="activeTab"
-      background-color="primary"
-      fixed-tabs
-      centered
-      dark
-    >
+    <v-tabs v-model="activeTab" background-color="primary" fixed-tabs centered dark>
       <v-tabs-slider></v-tabs-slider>
 
       <v-tab href="#tab-1">

@@ -1,43 +1,24 @@
 <template>
   <v-container class="d-flex flex-column align-start min-height">
-    <v-btn
-      @click="dialogs.download = true"
-      outlined
-      class="mb-8 mt-2 full-width"
-      color="primary"
-    >
+    <v-btn @click="dialogs.download = true" outlined class="mb-8 mt-2 full-width" color="primary">
       <v-icon left>
         mdi-cash-multiple
       </v-icon>
       Baixar gastos
     </v-btn>
 
-    <v-btn
-      @click="dialogs.erase = true"
-      outlined
-      class="mb-5 full-width"
-      color="error"
-    >
+    <v-btn @click="dialogs.erase = true" outlined class="mb-5 full-width" color="error">
       <v-icon left>
         mdi-cash-remove
       </v-icon>
       Apagar gastos
     </v-btn>
 
-    <v-btn
-      class="mt-auto align-self-center"
-      text
-      v-on:click="dialogs.about = true"
-    >
+    <v-btn class="mt-auto align-self-center" text v-on:click="dialogs.about = true">
       Sobre o aplicativo
     </v-btn>
 
-    <v-btn
-      class="mt-5 align-self-center"
-      text
-      color="error"
-      v-on:click="logout()"
-    >
+    <v-btn class="mt-5 align-self-center" text color="error" v-on:click="logout()">
       Logout
     </v-btn>
 
@@ -67,11 +48,7 @@
                   class="pt-8"
                   label="Período a ser baixado"
                   v-model="downloadDetails.formattedPeriod"
-                  @blur="
-                    downloadDetails.period = parsePeriod(
-                      downloadDetails.formattedPeriod
-                    )
-                  "
+                  @blur="downloadDetails.period = parsePeriod(downloadDetails.formattedPeriod)"
                   prepend-icon="mdi-calendar"
                   readonly
                   v-bind="attrs"
@@ -89,11 +66,7 @@
                 <v-btn text @click="clearPeriod()">
                   Limpar
                 </v-btn>
-                <v-btn
-                  text
-                  color="primary"
-                  @click="$refs.periodMenu.save(downloadDetails.period)"
-                >
+                <v-btn text color="primary" @click="$refs.periodMenu.save(downloadDetails.period)">
                   OK
                 </v-btn>
               </v-date-picker>
@@ -129,19 +102,14 @@
       <v-card>
         <v-card-title>
           <span class="headline"
-            >Tem certeza que deseja remover <b>todos</b> os gastos
-            cadastrados?</span
+            >Tem certeza que deseja remover <b>todos</b> os gastos cadastrados?</span
           >
         </v-card-title>
         <v-card-text>
           Esta ação é irreversível.
         </v-card-text>
         <v-card-actions>
-          <v-btn
-            color="error"
-            text
-            v-on:click="dialogs.eraseConfirmation = true"
-          >
+          <v-btn color="error" text v-on:click="dialogs.eraseConfirmation = true">
             Sim, remover todos os gastos
           </v-btn>
           <v-spacer></v-spacer>
@@ -156,8 +124,7 @@
       <v-card>
         <v-card-title>
           <span class="headline"
-            >Tem certeza <b>mesmo</b> que deseja remover <b>todos</b> os gastos
-            cadastrados?</span
+            >Tem certeza <b>mesmo</b> que deseja remover <b>todos</b> os gastos cadastrados?</span
           >
         </v-card-title>
         <v-card-text> Esta ação é <b>realmente</b> irreversível. </v-card-text>
@@ -255,23 +222,12 @@
         }
         if (this.downloadDetails.period !== null) {
           if (this.downloadDetails.period[0] !== undefined) {
-            let [
-              start_year,
-              start_month,
-            ] = this.downloadDetails.period[0].split('-')
-            parameters['startDate'] = new Date(
-              start_year,
-              start_month - 1
-            ).toISOString()
+            let [start_year, start_month] = this.downloadDetails.period[0].split('-')
+            parameters['startDate'] = new Date(start_year, start_month - 1).toISOString()
           }
           if (this.downloadDetails.period[1] !== undefined) {
-            let [end_year, end_month] = this.downloadDetails.period[1].split(
-              '-'
-            )
-            parameters['endDate'] = new Date(
-              end_year,
-              end_month - 1
-            ).toISOString()
+            let [end_year, end_month] = this.downloadDetails.period[1].split('-')
+            parameters['endDate'] = new Date(end_year, end_month - 1).toISOString()
           }
         }
         try {
@@ -379,9 +335,7 @@
 
     watch: {
       'downloadDetails.period': function() {
-        this.downloadDetails.formattedPeriod = this.formatPeriod(
-          this.downloadDetails.period
-        )
+        this.downloadDetails.formattedPeriod = this.formatPeriod(this.downloadDetails.period)
       },
     },
 
@@ -389,8 +343,7 @@
       formatErrors() {
         const errors = []
         if (!this.$v.downloadDetails.format.$dirty) return errors
-        !this.$v.downloadDetails.format.required &&
-          errors.push('Selecione um formato')
+        !this.$v.downloadDetails.format.required && errors.push('Selecione um formato')
         return errors
       },
       formattedDownloadPeriod() {

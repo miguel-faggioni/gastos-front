@@ -9,11 +9,7 @@
     <v-tabs-items v-model="activeTab">
       <v-skeleton-loader v-show="loading" type="table"></v-skeleton-loader>
 
-      <v-tab-item
-        v-for="tabName in tabs"
-        :key="tabName"
-        :value="'tab-' + tabName"
-      >
+      <v-tab-item v-for="tabName in tabs" :key="tabName" :value="'tab-' + tabName">
         <v-text-field
           v-model="search"
           append-icon="mdi-magnify"
@@ -47,18 +43,11 @@
             <v-icon
               small
               class="mr-2"
-              @click="
-                editItem(gastosByMonth[tabName.replace('tab-', '')], item)
-              "
+              @click="editItem(gastosByMonth[tabName.replace('tab-', '')], item)"
             >
               mdi-pencil
             </v-icon>
-            <v-icon
-              small
-              @click="
-                deleteItem(gastosByMonth[tabName.replace('tab-', '')], item)
-              "
-            >
+            <v-icon small @click="deleteItem(gastosByMonth[tabName.replace('tab-', '')], item)">
               mdi-delete
             </v-icon>
           </template>
@@ -70,9 +59,7 @@
     <v-dialog v-model="dialogs.delete">
       <v-card>
         <v-card-title>
-          <span class="headline"
-            >Tem certeza que deseja remover este gasto?</span
-          >
+          <span class="headline">Tem certeza que deseja remover este gasto?</span>
         </v-card-title>
         <v-card-text>
           Esta ação é irreversível.
@@ -207,15 +194,13 @@
         const errors = []
         if (!this.$v.editedItem.valor.$dirty) return errors
         !this.$v.editedItem.valor.required && errors.push('Insira um valor')
-        !this.$v.editedItem.valor.decimal &&
-          errors.push('O valor deve seguir o formato 1234.56')
+        !this.$v.editedItem.valor.decimal && errors.push('O valor deve seguir o formato 1234.56')
         return errors
       },
       categoriaErrors() {
         const errors = []
         if (!this.$v.editedItem.categoria.$dirty) return errors
-        !this.$v.editedItem.categoria.required &&
-          errors.push('Selecione uma categoria')
+        !this.$v.editedItem.categoria.required && errors.push('Selecione uma categoria')
         return errors
       },
       dataErrors() {
@@ -347,9 +332,7 @@
       formatDate: function(value) {
         if (!value) return 'Sem data'
         let val = new Date(Number(value.unix_timestamp))
-        return `${val.getDate()} (${val
-          .getDayOfWeekAbbreviation(val.getDay())
-          .substring(0, 3)})`
+        return `${val.getDate()} (${val.getDayOfWeekAbbreviation(val.getDay()).substring(0, 3)})`
       },
     },
   }

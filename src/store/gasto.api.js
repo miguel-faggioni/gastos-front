@@ -20,9 +20,7 @@ export default {
       }
     },
     update(state, updatedGasto) {
-      let indexToUpdate = state.gastos.findIndex(
-        gasto => gasto.id === updatedGasto.id
-      )
+      let indexToUpdate = state.gastos.findIndex(gasto => gasto.id === updatedGasto.id)
       if (indexToUpdate !== -1) {
         state.gastos.splice(indexToUpdate, 1, updatedGasto)
       }
