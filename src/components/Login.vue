@@ -27,7 +27,7 @@
         ></v-text-field>
       </v-row>
       <v-row class="mt-5">
-        <v-btn block v-on:click="login()" color="primary">
+        <v-btn block v-on:click="login()" color="primary" :loading="loading" :disabled="loading">
           Login
         </v-btn>
       </v-row>
@@ -58,6 +58,7 @@
         show: false,
         timeout: 2000,
       },
+      loading: false,
     }),
 
     methods: {
@@ -66,15 +67,18 @@
         if (this.$v.$invalid) {
           return
         }
+        this.loading = true
         try {
           await this.$store.dispatch('auth/login', {
             email: this.email,
             senha: this.senha,
           })
         } catch (err) {
+          this.loading = false
           this.snackbar.show = true
           return
         }
+        this.loading = false
         this.$router.push({
           path: '/',
         })

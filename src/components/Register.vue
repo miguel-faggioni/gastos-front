@@ -39,7 +39,7 @@
         ></v-text-field>
       </v-row>
       <v-row class="mt-5">
-        <v-btn block v-on:click="register()" color="primary">
+        <v-btn block v-on:click="register()" color="primary" :loading="loading" :disabled="loading">
           Cadastrar-se
         </v-btn>
       </v-row>
@@ -71,6 +71,7 @@
         show: false,
         timeout: 2000,
       },
+      loading: false,
     }),
 
     methods: {
@@ -79,6 +80,7 @@
         if (this.$v.$invalid) {
           return
         }
+        this.loading = true
         try {
           await this.$store.dispatch('auth/register', {
             nome: this.nome,
@@ -87,7 +89,13 @@
           })
         } catch (err) {
           this.snackbar.show = true
+          this.loading = false
+          return
         }
+        this.loading = false
+        this.$router.push({
+          path: '/',
+        })
       },
     },
 
