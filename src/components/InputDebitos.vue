@@ -5,7 +5,6 @@
         <v-col>
           <v-text-field
             label="Valor"
-            prefix="R$"
             v-model="debito.valor"
             required
             :error-messages="valorErrors"
@@ -13,7 +12,11 @@
             @blur="$v.debito.valor.$touch()"
             ref="valor"
             v-on:keyup.enter="$refs.categoria.focus()"
-          ></v-text-field>
+          >
+            <div slot="prepend" class="prepend-text">
+              R$
+            </div>
+          </v-text-field>
         </v-col>
         <v-col>
           <v-select
@@ -56,7 +59,9 @@
             @blur="$v.debito.dia.$touch()"
             v-on:keyup.enter="$refs.modo.focus()"
           ></v-select>
+        </v-col>
 
+        <v-col>
           <v-select
             :items="modos"
             label="Modo de pagamento"
@@ -82,12 +87,11 @@
             </template>
           </v-select>
         </v-col>
-        <v-col>
-          <v-btn block v-on:click="salvar()" color="primary">
-            Salvar débito automático
-          </v-btn>
-        </v-col>
       </v-row>
+
+      <v-btn block v-on:click="salvar()" color="primary">
+        Salvar débito automático
+      </v-btn>
     </form>
 
     <RegisterModoDePagamento v-bind:show.sync="dialogs.registerModoDePagamento" />
@@ -236,6 +240,13 @@
 
 <style scoped lang="scss">
   button {
-    height: 100% !important;
+    min-height: 50px;
+  }
+  .prepend-text {
+    heith: 24px;
+    width: 24px;
+    line-height: 24px;
+    color: rgba(0, 0, 0, 0.54);
+    padding-left: 0.15em;
   }
 </style>
