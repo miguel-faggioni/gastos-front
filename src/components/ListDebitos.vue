@@ -26,8 +26,9 @@
         {{ currency }} {{ item.valor | formatCurrency }}
       </template>
       <template v-slot:item.categoria="{ item }">
-        <v-icon>{{ item.categoria.icone }}</v-icon>
+        <v-icon class="d-none d-sm-inline-block">{{ item.categoria.icone }}</v-icon>
         {{ item.categoria.sigla }}
+        <v-icon class="d-sm-none">{{ item.categoria.icone }}</v-icon>
       </template>
       <template v-slot:item.dia="{ item }">
         {{ item.dia_do_mes }}
