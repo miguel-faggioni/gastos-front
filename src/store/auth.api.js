@@ -26,15 +26,18 @@ export default {
       context.commit('unsetToken')
     },
     async register(context, { nome, email, senha }) {
-      let response = await axios.post('/auth/register', {
-        nome: nome,
-        email: email,
-        senha: senha,
-      })
-      context.dispatch('login', {
-        email: email,
-        senha: senha,
-      })
+      let response = await axios
+        .post('/auth/register', {
+          nome: nome,
+          email: email,
+          senha: senha,
+        })
+        .then(() => {
+          return context.dispatch('login', {
+            email: email,
+            senha: senha,
+          })
+        })
     },
   },
   modules: {},
