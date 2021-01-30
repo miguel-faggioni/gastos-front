@@ -7,6 +7,7 @@
             label="Valor"
             v-model="debito.valor"
             required
+            type="number"
             :error-messages="valorErrors"
             @input="$v.debito.valor.$touch()"
             @blur="$v.debito.valor.$touch()"

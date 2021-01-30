@@ -7,6 +7,7 @@
             label="Valor"
             v-model="gasto.valor"
             required
+            type="number"
             :error-messages="valorErrors"
             @input="$v.gasto.valor.$touch()"
             @blur="$v.gasto.valor.$touch()"
