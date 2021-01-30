@@ -20,13 +20,14 @@
           </v-text-field>
         </v-col>
         <v-col>
-          <v-select
-            :items="categorias"
-            label="Categoria"
+          <v-autocomplete
             v-model="debito.categoria"
+            label="Categoria"
+            :items="categorias"
             :prepend-icon="icons.categoria"
             return-object
             item-text="nome"
+            :filter="customFilter"
             required
             ref="categoria"
             :error-messages="categoriaErrors"
@@ -44,7 +45,7 @@
                 </v-list-item-content>
               </v-list-item>
             </template>
-          </v-select>
+          </v-autocomplete>
         </v-col>
       </v-row>
       <v-row>
@@ -63,9 +64,10 @@
         </v-col>
 
         <v-col>
-          <v-select
+          <v-autocomplete
             :items="modos"
             label="Modo de pagamento"
+            :filter="customFilter"
             v-model="debito.modo_de_pagamento"
             return-object
             item-text="nome"
@@ -86,7 +88,7 @@
                 </v-list-item-content>
               </v-list-item>
             </template>
-          </v-select>
+          </v-autocomplete>
         </v-col>
       </v-row>
 
@@ -186,6 +188,13 @@
       limpar: function() {
         this.$v.debito.$reset()
         this.debito.valor = null
+      },
+      customFilter: function(item, queryText) {
+        const textOne = item.nome.toLowerCase()
+        const textTwo = item.sigla.toLowerCase()
+        const searchText = queryText.toLowerCase()
+
+        return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
       },
     },
 
