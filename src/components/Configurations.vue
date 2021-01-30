@@ -14,7 +14,11 @@
       Apagar gastos
     </v-btn>
 
-    <v-btn class="mt-auto align-self-center" text v-on:click="dialogs.about = true">
+    <v-btn class="mt-auto align-self-center" text v-on:click="dialogs.feedback = true">
+      Fale conosco
+    </v-btn>
+
+    <v-btn class="mt-5 align-self-center" text v-on:click="dialogs.about = true">
       Sobre o aplicativo
     </v-btn>
 
@@ -152,9 +156,21 @@
       </v-card>
     </v-dialog>
 
-    <v-dialog v-model="dialogs.about">
+    <v-dialog v-model="dialogs.about" fullscreen>
       <v-card>
+        <v-btn icon @click="dialogs.about = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
         <About />
+      </v-card>
+    </v-dialog>
+
+    <v-dialog v-model="dialogs.feedback" fullscreen>
+      <v-card>
+        <v-btn icon @click="dialogs.feedback = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <Feedback />
       </v-card>
     </v-dialog>
   </v-container>
@@ -164,12 +180,14 @@
   import { validationMixin } from 'vuelidate'
   import { required } from 'vuelidate/lib/validators'
   import About from '@/views/About.vue'
+  import Feedback from '@/views/Feedback.vue'
 
   export default {
     mixins: [validationMixin],
 
     components: {
       About,
+      Feedback,
     },
 
     data: () => ({
@@ -187,6 +205,7 @@
         erase: false,
         eraseConfirmation: false,
         about: false,
+        feedback: false,
       },
       downloadDetails: {
         periodMenu: false,

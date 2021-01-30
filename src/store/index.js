@@ -8,6 +8,7 @@ import CategoriaAPI from './categoria.api'
 import PagamentoAPI from './pagamento.api'
 import GastoAPI from './gasto.api'
 import DebitoAPI from './debito.api'
+import FeedbackAPI from './feedback.api'
 
 export default new Vuex.Store({
   state: {},
@@ -23,5 +24,6 @@ export default new Vuex.Store({
     pagamento: PagamentoAPI,
     gasto: GastoAPI,
     debito: DebitoAPI,
+    feedback: FeedbackAPI,
   },
 })

@@ -1,11 +1,10 @@
 <template>
-  <v-container>
-    <v-card-title>{{ title }}</v-card-title>
-    <v-card-text>
-      <p v-for="row in text" :key="row">
-        {{ row }}
-      </p>
-    </v-card-text>
+  <v-container class="more-width">
+    <h2 class="mb-5">{{ title }}</h2>
+
+    <p v-for="row in text" :key="row">
+      {{ row }}
+    </p>
   </v-container>
 </template>
 
@@ -23,3 +22,12 @@
     }),
   }
 </script>
+
+<style lang="scss">
+  .more-width {
+    padding: 20px !important;
+  }
+  p {
+    text-align: justify;
+  }
+</style>
