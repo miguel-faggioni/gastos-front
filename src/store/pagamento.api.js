@@ -6,17 +6,15 @@ export default {
     modos: [],
     icones: [
       // https://materialdesignicons.com/
-      'mdi-account-cash',
-      'mdi-account-clock',
-      'mdi-account-switch',
-      'mdi-briefcase',
-      'mdi-cash-multiple',
-      'mdi-cash-refund',
-      'mdi-cash-usd',
-      'mdi-cash-usd-outline',
-      'mdi-credit-card-outline',
-      'mdi-credit-card-sync',
-      'mdi-currency-btc',
+      'mdi-credit-card-outline', // cartão
+      'mdi-credit-card-sync', // fatura
+      'mdi-account-cash', // dinheiro vivo
+      'mdi-piggy-bank', // savings
+      'mdi-briefcase', // salário
+      'mdi-cash-multiple', // dinheiro
+      'mdi-cash-refund', // pagamento de dívida
+      'mdi-cash-usd', // simples
+      'mdi-currency-btc', // bitcoin
     ],
   },
   mutations: {
