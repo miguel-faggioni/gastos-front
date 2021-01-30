@@ -88,6 +88,7 @@
             senha: this.senha,
           })
         } catch (err) {
+          this.snackbar.msg = err.response.data
           this.snackbar.show = true
           this.loading = false
           return
