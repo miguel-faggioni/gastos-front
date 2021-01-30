@@ -263,5 +263,6 @@
     line-height: 24px;
     color: rgba(0, 0, 0, 0.54);
     padding-left: 0.15em;
+    font-weight: bold;
   }
 </style>
