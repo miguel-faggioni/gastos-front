@@ -60,7 +60,7 @@
           Voltar
         </v-btn>
         <v-btn text color="accent" v-on:click="inserir()" :loading="loading" :disabled="loading">
-          Criar modo de pagamento
+          Criar
         </v-btn>
       </v-card-actions>
     </v-card>
