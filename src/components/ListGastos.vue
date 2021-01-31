@@ -162,6 +162,8 @@
         categoria: null,
         modo_de_pagamento: null,
         data: null,
+        tipo: null,
+        obs: null,
       },
       dialogs: {
         edit: false,
@@ -311,6 +313,8 @@
           categoria: this.editedItem.categoria,
           pagamento: this.editedItem.modo_de_pagamento,
           data: this.editedItem.date,
+          tipo: this.editedItem.tipo,
+          obs: this.editedItem.obs,
         })
         this.dialogs.edit = false
       },

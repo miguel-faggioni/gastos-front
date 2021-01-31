@@ -19,6 +19,7 @@
             </div>
           </v-text-field>
         </v-col>
+
         <v-col>
           <v-autocomplete
             v-model="gasto.categoria"
@@ -95,7 +96,27 @@
         </v-col>
       </v-row>
 
-      <v-btn block v-on:click="salvar()" color="primary">
+      <v-row>
+        <v-col class="mb-3 py-0">
+          <v-btn text block x-small @click="showMore = !showMore">
+            mostrar {{ showMore ? 'menos' : 'mais' }}
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="showMore">
+        <v-col class="py-0">
+          <v-select :items="tipos" label="Tipo" v-model="gasto.tipo"></v-select>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="showMore">
+        <v-col class="py-0">
+          <v-textarea v-model="gasto.obs" label="Observações"></v-textarea>
+        </v-col>
+      </v-row>
+
+      <v-btn block v-on:click="salvar()" color="primary" class="min-height">
         Salvar gasto
       </v-btn>
     </form>
@@ -142,6 +163,14 @@
           this.gasto.modo_de_pagamento = JSON.parse(lastModo)
         }
       }
+      if (this.gasto.tipo === null) {
+        let lastTipo = localStorage.getItem('gasto.lastTipo')
+        if ('lastTipo' in localStorage && lastTipo !== undefined && lastTipo !== null) {
+          this.gasto.tipo = JSON.parse(lastTipo)
+        } else {
+          this.gasto.tipo = 'Variável'
+        }
+      }
     },
 
     props: {
@@ -153,12 +182,15 @@
             categoria: null,
             modo_de_pagamento: null,
             date: new Date(),
+            obs: '',
+            tipo: null,
           }
         },
       },
     },
 
     data: () => ({
+      showMore: false,
       datetimepickerProps: {
         prependIcon: 'mdi-calendar',
       },
@@ -200,6 +232,8 @@
             categoria: this.gasto.categoria,
             pagamento: this.gasto.modo_de_pagamento,
             data: this.gasto.date,
+            obs: this.gasto.obs,
+            tipo: this.gasto.tipo,
           })
         } else {
           await this.$store.dispatch('gasto/create', {
@@ -207,6 +241,8 @@
             categoria: this.gasto.categoria,
             pagamento: this.gasto.modo_de_pagamento,
             data: this.gasto.date,
+            obs: this.gasto.obs,
+            tipo: this.gasto.tipo,
           })
           localStorage.setItem('gasto.lastCategoria', JSON.stringify(this.gasto.categoria))
           localStorage.setItem('gasto.lastModo', JSON.stringify(this.gasto.modo_de_pagamento))
@@ -218,6 +254,7 @@
       limpar: function() {
         this.$v.gasto.$reset()
         this.gasto.valor = null
+        this.gasto.obs = null
       },
       customFilter: function(item, queryText) {
         const textOne = item.nome.toLowerCase()
@@ -241,6 +278,7 @@
       ...mapState({
         categorias: state => state.categoria.categorias,
         modos: state => state.pagamento.modos,
+        tipos: state => state.gasto.tipos,
       }),
       valorErrors() {
         const errors = []
@@ -272,7 +310,7 @@
 </script>
 
 <style scoped lang="scss">
-  button {
+  .min-height {
     min-height: 50px;
   }
   .prepend-text {

@@ -32,25 +32,29 @@ export default {
       let response = await axios.get('/debitos-automaticos')
       context.commit('set', response.data)
     },
-    async create(context, { valor, dia, categoria, pagamento }) {
+    async create(context, { valor, dia, categoria, pagamento, tipo, obs }) {
       return axios
         .post('/debitos-automaticos', {
           valor: valor,
           dia: dia,
           idCategoria: categoria.id,
           idModoDePagamento: pagamento.id,
+          tipo: tipo,
+          obs: obs,
         })
         .then(response => {
           context.commit('push', response.data)
         })
     },
-    async update(context, { id, valor, dia, categoria, pagamento }) {
+    async update(context, { id, valor, dia, categoria, pagamento, tipo, obs }) {
       return axios
         .put(`/debitos-automaticos/${id}`, {
           valor: valor,
           dia: dia,
           idCategoria: categoria.id,
           idModoDePagamento: pagamento.id,
+          tipo: tipo,
+          obs: obs,
         })
         .then(response => {
           context.commit('update', response.data)

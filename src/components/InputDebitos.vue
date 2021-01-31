@@ -19,6 +19,7 @@
             </div>
           </v-text-field>
         </v-col>
+
         <v-col>
           <v-autocomplete
             v-model="debito.categoria"
@@ -48,6 +49,7 @@
           </v-autocomplete>
         </v-col>
       </v-row>
+
       <v-row>
         <v-col>
           <v-select
@@ -92,7 +94,27 @@
         </v-col>
       </v-row>
 
-      <v-btn block v-on:click="salvar()" color="primary">
+      <v-row>
+        <v-col class="mb-3 py-0">
+          <v-btn text block x-small @click="showMore = !showMore">
+            mostrar {{ showMore ? 'menos' : 'mais' }}
+          </v-btn>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="showMore">
+        <v-col class="py-0">
+          <v-select :items="tipos" label="Tipo" v-model="debito.tipo"></v-select>
+        </v-col>
+      </v-row>
+
+      <v-row v-if="showMore">
+        <v-col class="py-0">
+          <v-textarea v-model="debito.obs" label="Observações"></v-textarea>
+        </v-col>
+      </v-row>
+
+      <v-btn block v-on:click="salvar()" color="primary" class="min-height">
         Salvar débito automático
       </v-btn>
     </form>
@@ -123,20 +145,28 @@
         this.$store.dispatch('categoria/get'),
         this.$store.dispatch('pagamento/get'),
       ])
-      if (this.gasto.categoria === null) {
+      if (this.debito.categoria === null) {
         let lastCategoria = localStorage.getItem('debito.lastCategoria')
         if (
           'lastCategoria' in localStorage &&
           lastCategoria !== undefined &&
           lastCategoria !== null
         ) {
-          this.gasto.categoria = JSON.parse(lastCategoria)
+          this.debito.categoria = JSON.parse(lastCategoria)
         }
       }
-      if (this.gasto.modo_de_pagamento === null) {
+      if (this.debito.modo_de_pagamento === null) {
         let lastModo = localStorage.getItem('debito.lastModo')
         if ('lastModo' in localStorage && lastModo !== undefined && lastModo !== null) {
-          this.gasto.modo_de_pagamento = JSON.parse(lastModo)
+          this.debito.modo_de_pagamento = JSON.parse(lastModo)
+        }
+      }
+      if (this.debito.tipo === null) {
+        let lastTipo = localStorage.getItem('debito.lastTipo')
+        if ('lastTipo' in localStorage && lastTipo !== undefined && lastTipo !== null) {
+          this.debito.tipo = JSON.parse(lastTipo)
+        } else {
+          this.debito.tipo = 'Fixo'
         }
       }
     },
@@ -150,12 +180,15 @@
             categoria: null,
             modo_de_pagamento: null,
             dia: new Date().getDate(),
+            tipo: null,
+            obs: '',
           }
         },
       },
     },
 
     data: () => ({
+      showMore: false,
       dialogs: {
         registerModoDePagamento: false,
         registerCategoria: false,
@@ -196,8 +229,8 @@
             pagamento: this.debito.modo_de_pagamento,
             dia: this.debito.dia,
           })
-          localStorage.setItem('debito.lastCategoria', JSON.stringify(this.gasto.categoria))
-          localStorage.setItem('debito.lastModo', JSON.stringify(this.gasto.modo_de_pagamento))
+          localStorage.setItem('debito.lastCategoria', JSON.stringify(this.debito.categoria))
+          localStorage.setItem('debito.lastModo', JSON.stringify(this.debito.modo_de_pagamento))
           this.limpar()
           this.$refs.valor.focus()
         }
@@ -229,6 +262,7 @@
       ...mapState({
         categorias: state => state.categoria.categorias,
         modos: state => state.pagamento.modos,
+        tipos: state => state.gasto.tipos,
       }),
       dias() {
         let list = []
@@ -267,7 +301,7 @@
 </script>
 
 <style scoped lang="scss">
-  button {
+  .min-height {
     min-height: 50px;
   }
   .prepend-text {

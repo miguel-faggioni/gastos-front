@@ -27,7 +27,7 @@
       </template>
       <template v-slot:item.categoria="{ item }">
         <v-icon class="d-none d-sm-inline-block">{{ item.categoria.icone }}</v-icon>
-        {{ item.categoria.sigla }}
+        {{ item.categoria.nome }}
         <v-icon class="d-sm-none">{{ item.categoria.icone }}</v-icon>
       </template>
       <template v-slot:item.dia="{ item }">
@@ -134,6 +134,8 @@
         categoria: null,
         modo_de_pagamento: null,
         dia: null,
+        tipo: null,
+        obs: null,
       },
       dialogs: {
         edit: false,
@@ -187,6 +189,8 @@
           categoria: this.editedItem.categoria,
           pagamento: this.editedItem.modo_de_pagamento,
           dia: this.editedItem.dia,
+          tipo: this.editedItem.tipo,
+          obs: this.editedItem.obs,
         })
         this.dialogs.edit = false
       },

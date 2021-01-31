@@ -4,6 +4,7 @@ export default {
   namespaced: true,
   state: {
     gastos: [],
+    tipos: ['Variável', 'Fixo', 'Renda'],
   },
   mutations: {
     // synchronous
@@ -32,13 +33,15 @@ export default {
       let response = await axios.get('/gastos')
       context.commit('set', response.data)
     },
-    async create(context, { valor, data, categoria, pagamento }) {
+    async create(context, { valor, data, categoria, pagamento, obs, tipo }) {
       return axios
         .post('/gastos', {
           valor: valor,
           data: data,
           idCategoria: categoria.id,
           idModoDePagamento: pagamento.id,
+          obs: obs,
+          tipo: tipo,
         })
         .then(response => {
           context.commit('push', response.data)
@@ -73,13 +76,15 @@ export default {
         URL.revokeObjectURL(link.href)
       })
     },
-    async update(context, { id, valor, data, categoria, pagamento }) {
+    async update(context, { id, valor, data, categoria, pagamento, obs, tipo }) {
       return axios
         .put(`/gastos/${id}`, {
           valor: valor,
           data: data,
           idCategoria: categoria.id,
           idModoDePagamento: pagamento.id,
+          obs: obs,
+          tipo: tipo,
         })
         .then(response => {
           context.commit('update', response.data)
