@@ -4,9 +4,6 @@
       <v-tabs-slider></v-tabs-slider>
 
       <v-tab href="#tab-1">
-        <!-- <v-icon>mdi-currency-usd-circle-outline</v-icon> -->
-        <!-- <v-icon>mdi-currency-usd</v-icon> -->
-        <!-- <v-icon>mdi-currency-brl</v-icon> -->
         <v-icon>monetization_on</v-icon>
       </v-tab>
 
@@ -15,9 +12,11 @@
       </v-tab>
 
       <v-tab href="#tab-3">
+        <v-icon>mdi-chart-line</v-icon>
+      </v-tab>
+
+      <v-tab href="#tab-4">
         <v-icon>miscellaneous_services</v-icon>
-        <!-- <v-icon>settings</v-icon> -->
-        <!-- <v-icon>build</v-icon> -->
       </v-tab>
     </v-tabs>
 
@@ -26,12 +25,18 @@
         <InputGastos />
         <ListGastos />
       </v-tab-item>
+
       <v-tab-item value="tab-2">
         <InputDebitos />
         <v-divider></v-divider>
         <ListDebitos />
       </v-tab-item>
+
       <v-tab-item value="tab-3">
+        <Analysis />
+      </v-tab-item>
+
+      <v-tab-item value="tab-4">
         <Configurations />
       </v-tab-item>
     </v-tabs-items>
@@ -45,6 +50,7 @@
   import InputDebitos from '@/components/InputDebitos.vue'
   import ListDebitos from '@/components/ListDebitos.vue'
   import Configurations from '@/components/Configurations.vue'
+  import Analysis from '@/components/Analysis.vue'
 
   export default {
     components: {
@@ -53,6 +59,7 @@
       InputDebitos,
       ListDebitos,
       Configurations,
+      Analysis,
     },
 
     data: () => ({
