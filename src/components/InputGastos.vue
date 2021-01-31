@@ -126,6 +126,22 @@
         this.$store.dispatch('categoria/get'),
         this.$store.dispatch('pagamento/get'),
       ])
+      if (this.gasto.categoria === null) {
+        let lastCategoria = localStorage.getItem('gasto.lastCategoria')
+        if (
+          'lastCategoria' in localStorage &&
+          lastCategoria !== undefined &&
+          lastCategoria !== null
+        ) {
+          this.gasto.categoria = JSON.parse(lastCategoria)
+        }
+      }
+      if (this.gasto.modo_de_pagamento === null) {
+        let lastModo = localStorage.getItem('gasto.lastModo')
+        if ('lastModo' in localStorage && lastModo !== undefined && lastModo !== null) {
+          this.gasto.modo_de_pagamento = JSON.parse(lastModo)
+        }
+      }
     },
 
     props: {
@@ -192,6 +208,8 @@
             pagamento: this.gasto.modo_de_pagamento,
             data: this.gasto.date,
           })
+          localStorage.setItem('gasto.lastCategoria', JSON.stringify(this.gasto.categoria))
+          localStorage.setItem('gasto.lastModo', JSON.stringify(this.gasto.modo_de_pagamento))
           this.limpar()
           this.$refs.valor.focus()
         }
