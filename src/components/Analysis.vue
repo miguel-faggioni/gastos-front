@@ -2,7 +2,19 @@
   <v-container>
     <v-col>
       <v-card color="grey lighten-3">
+        <LineChart :chartData="graphs.first.data" :options="graphs.first.options" />
+      </v-card>
+    </v-col>
+
+    <v-col>
+      <v-card color="grey lighten-3">
         <PieChart :chartData="graphs.second.data" :options="graphs.second.options" />
+      </v-card>
+    </v-col>
+
+    <v-col>
+      <v-card color="grey lighten-3">
+        <PieChart :chartData="graphs.third.data" :options="graphs.third.options" />
       </v-card>
     </v-col>
 
@@ -17,14 +29,21 @@
 <script>
   import { mapState } from 'vuex'
   import PieChart from '@/components/charts/PieChart.vue'
+  import LineChart from '@/components/charts/LineChart.vue'
 
   export default {
     components: {
       PieChart,
+      LineChart,
     },
 
     async beforeCreate() {
       await Promise.all([this.$store.dispatch('gasto/get')])
+    },
+
+    async mounted() {
+      // shuffle colors
+      this.colors.shuffle()
     },
 
     data: () => ({
@@ -101,7 +120,14 @@
     methods: {
       parseGastos(gastos) {
         // empty base
+        let first = {
+          datasets: [],
+        }
         let second = {
+          labels: [],
+          data: [],
+        }
+        let third = {
           labels: [],
           data: [],
         }
@@ -109,17 +135,22 @@
           labels: [],
           data: [],
         }
+
+        // default options
         let options = {
           legend: {
             position: 'right',
           },
           tooltips: {
+            intersect: false,
             callbacks: {
               label: function(tooltipItems, data) {
                 let sum = data.datasets[tooltipItems.datasetIndex].data.reduce(
                   (acc, cur) => acc + cur
                 )
-                let value = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index]
+                let value = data.datasets[tooltipItems.datasetIndex].data[
+                  tooltipItems.index
+                ].toFixed(0)
                 let percentage = ((value * 100) / sum).toFixed(0) + '%'
                 let name = data.labels[tooltipItems.index]
                 return ` ${name}: R$ ${value} (${percentage})`
@@ -130,6 +161,24 @@
 
         // iterate over the data
         gastos.forEach(gasto => {
+          // parse for the first graph
+          let firstIndex = first.datasets.findIndex(dataset => dataset.label === gasto.tipo)
+          if (firstIndex === -1) {
+            first.datasets.push({
+              label: gasto.tipo,
+              data: [null, null, null, null, null, null, null, null, null, null, null, null],
+            })
+            firstIndex = first.datasets.length - 1
+          }
+          first.datasets[firstIndex].data[gasto.data.mes] =
+            first.datasets[firstIndex].data[gasto.data.mes] || 0
+          first.datasets[firstIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
+
+          // ignore tipo='Renda' for graphs 2,3,4
+          if (gasto.tipo === 'Renda') {
+            return
+          }
+
           // parse for the second graph
           let secondIndex = second.labels.indexOf(gasto.categoria.nome)
           if (secondIndex === -1) {
@@ -139,15 +188,72 @@
           }
           second.data[secondIndex] += parseFloat(gasto.valor)
 
+          // parse for the third graph
+          let thirdIndex = third.labels.indexOf(gasto.modo_de_pagamento.nome)
+          if (thirdIndex === -1) {
+            third.labels.push(gasto.modo_de_pagamento.nome)
+            third.data.push(0)
+            thirdIndex = third.labels.length - 1
+          }
+          third.data[thirdIndex] += parseFloat(gasto.valor)
+
           // parse for the fourth graph
-          let fourthIndex = fourth.labels.indexOf(gasto.modo_de_pagamento.nome)
+          let fourthIndex = fourth.labels.indexOf(gasto.tipo)
           if (fourthIndex === -1) {
-            fourth.labels.push(gasto.modo_de_pagamento.nome)
+            fourth.labels.push(gasto.tipo)
             fourth.data.push(0)
             fourthIndex = fourth.labels.length - 1
           }
           fourth.data[fourthIndex] += parseFloat(gasto.valor)
         })
+
+        // set first graph
+        this.graphs.first = {
+          data: {
+            labels: [
+              'Jan',
+              'Fev',
+              'Mar',
+              'Abr',
+              'Mai',
+              'Jun',
+              'Jul',
+              'Ago',
+              'Set',
+              'Out',
+              'Nov',
+              'Dez',
+            ],
+            datasets: first.datasets.map((dataset, i) => {
+              return Object.assign(
+                {
+                  //borderWidth: 0,
+                  backgroundColor: this.colors[i],
+                  borderColor: this.colors[i],
+                  fill: false,
+                  pointRadius: 0,
+                },
+                dataset
+              )
+            }),
+          },
+          options: {
+            tooltips: {
+              intersect: false,
+              mode: 'index',
+
+              callbacks: {
+                label: function(tooltipItems, data) {
+                  let value = data.datasets[tooltipItems.datasetIndex].data[
+                    tooltipItems.index
+                  ].toFixed(0)
+                  let name = data.datasets[tooltipItems.datasetIndex].label
+                  return ` ${name}: R$ ${value}`
+                },
+              },
+            },
+          },
+        }
 
         // set second graph
         this.graphs.second = {
@@ -165,13 +271,29 @@
           options: options,
         }
 
+        // set third graph
+        this.graphs.third = {
+          data: {
+            labels: third.labels,
+            datasets: [
+              {
+                label: 'Categoria',
+                data: third.data,
+                borderWidth: 0,
+                backgroundColor: this.colors,
+              },
+            ],
+          },
+          options: options,
+        }
+
         // set fourth graph
         this.graphs.fourth = {
           data: {
             labels: fourth.labels,
             datasets: [
               {
-                label: 'Categoria',
+                label: 'Tipo',
                 data: fourth.data,
                 borderWidth: 0,
                 backgroundColor: this.colors,

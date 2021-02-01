@@ -67,11 +67,11 @@
         </v-card-text>
         <v-card-actions>
           <v-btn color="error" text @click="finishDeleteItem()">
-            Sim, remover gasto
+            remover
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn text @click="dialogs.delete = false">
-            Não, voltar
+            voltar
           </v-btn>
         </v-card-actions>
       </v-card>

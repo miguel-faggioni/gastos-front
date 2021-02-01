@@ -9,6 +9,7 @@ import DatetimePicker from 'vuetify-datetime-picker'
 import Vuelidate from 'vuelidate'
 import './plugins/axios'
 import './plugins/date'
+import './plugins/array'
 
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)
