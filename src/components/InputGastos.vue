@@ -254,7 +254,7 @@
       limpar: function() {
         this.$v.gasto.$reset()
         this.gasto.valor = null
-        this.gasto.obs = null
+        this.gasto.obs = ''
       },
       customFilter: function(item, queryText) {
         const textOne = item.nome.toLowerCase()
