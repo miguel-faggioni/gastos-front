@@ -12,17 +12,23 @@
             </v-col>
 
             <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
-              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}
+              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
             </v-col>
           </v-row>
         </v-card>
       </v-col>
 
-      <v-col cols="5"> <ListGastos /><!-- TODO trocar --> </v-col>
+      <v-col cols="5" class="pr-0">
+        <v-card color="grey lighten-3">
+          <TableChart
+            :chartData="gastos"
+            :hideValues="hideValues"
+            backgroundColor="grey lighten-3"
+          />
+        </v-card>
 
-      <v-col cols="7">
-        <v-row>
-          <v-col cols="6">
+        <v-row class="pt-3">
+          <v-col cols="6" class="pr-2">
             <v-card color="grey lighten-3">
               <PieChart
                 :height="200"
@@ -32,7 +38,7 @@
             </v-card>
           </v-col>
 
-          <v-col cols="6">
+          <v-col cols="6" class="pl-2">
             <v-card color="grey lighten-3">
               <PieChart
                 :height="200"
@@ -42,12 +48,15 @@
             </v-card>
           </v-col>
         </v-row>
+      </v-col>
 
+      <v-col cols="7">
         <v-row>
           <v-col cols="12">
             <v-card color="grey lighten-3">
+              <!-- this value (147) was hand adjusted to match the heights of both columns -->
               <LineChart
-                :height="100"
+                :height="147"
                 :chartData="graphs.first.data"
                 :options="graphs.first.options"
               />
@@ -81,7 +90,7 @@
             </v-col>
 
             <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
-              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}
+              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
             </v-col>
           </v-row>
         </v-card>
@@ -113,7 +122,7 @@
         </v-row>
 
         <v-row>
-          <v-col cols="6">
+          <v-col cols="6" class="pr-2">
             <v-card color="grey lighten-3">
               <PieChart
                 :height="200"
@@ -123,7 +132,7 @@
             </v-card>
           </v-col>
 
-          <v-col cols="6">
+          <v-col cols="6" class="pl-2">
             <v-card color="grey lighten-3">
               <PieChart
                 :height="200"
@@ -135,7 +144,15 @@
         </v-row>
       </v-col>
 
-      <v-col class="max-width"> <ListGastos /><!-- TODO trocar --> </v-col>
+      <v-col class="max-width pt-0">
+        <v-card color="grey lighten-3">
+          <TableChart
+            :chartData="gastos"
+            :hideValues="hideValues"
+            backgroundColor="grey lighten-3"
+          />
+        </v-card>
+      </v-col>
     </v-row>
 
     <!-- mobile layout -->
@@ -152,7 +169,9 @@
           <v-row v-for="tipo in Object.keys(sums)" :key="tipo">
             <v-col class="d-flex justify-space-between">
               <div class="d-inline">{{ tipo }}:</div>
-              <div class="d-inline">R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}</div>
+              <div class="d-inline">
+                R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
+              </div>
             </v-col>
           </v-row>
         </v-card>
@@ -169,7 +188,7 @@
         </v-card>
       </v-col>
 
-      <v-col>
+      <v-col class="pt-0">
         <v-card color="grey lighten-3">
           <PieChart
             :height="200"
@@ -180,9 +199,9 @@
         </v-card>
       </v-col>
 
-      <v-col>
+      <v-col class="pt-0">
         <v-row>
-          <v-col cols="6">
+          <v-col cols="6" class="pr-2">
             <v-card color="grey lighten-3">
               <PieChart
                 :height="150"
@@ -193,7 +212,7 @@
             </v-card>
           </v-col>
 
-          <v-col cols="6">
+          <v-col cols="6" class="pl-2">
             <v-card color="grey lighten-3">
               <PieChart
                 :height="150"
@@ -206,7 +225,15 @@
         </v-row>
       </v-col>
 
-      <v-col class="max-width"> <ListGastos /><!-- TODO trocar --> </v-col>
+      <v-col class="max-width pt-0">
+        <v-card color="grey lighten-3">
+          <TableChart
+            :chartData="gastos"
+            :hideValues="hideValues"
+            backgroundColor="grey lighten-3"
+          />
+        </v-card>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -215,13 +242,13 @@
   import { mapState } from 'vuex'
   import PieChart from '@/components/charts/PieChart.vue'
   import LineChart from '@/components/charts/LineChart.vue'
-  import ListGastos from '@/components/ListGastos.vue'
+  import TableChart from '@/components/charts/TableChart.vue'
 
   export default {
     components: {
       PieChart,
       LineChart,
-      ListGastos,
+      TableChart,
     },
 
     async beforeCreate() {
@@ -310,7 +337,7 @@
       lineTooltipCallback(tooltipItems, data) {
         let value = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toFixed(0)
         let name = data.datasets[tooltipItems.datasetIndex].label
-        let valueToShow = this.$options.filters.value(value, this.hideValues)
+        let valueToShow = this.$options.filters.formatCurrency(value, this.hideValues)
         return ` ${name}: R$ ${valueToShow}`
       },
 
@@ -319,7 +346,7 @@
         let value = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toFixed(0)
         let percentage = ((value * 100) / sum).toFixed(0) + '%'
         let name = data.labels[tooltipItems.index]
-        let valueToShow = this.$options.filters.value(value, this.hideValues)
+        let valueToShow = this.$options.filters.formatCurrency(value, this.hideValues)
         return ` ${name}: R$ ${valueToShow} (${percentage})`
       },
 
@@ -524,7 +551,7 @@
     },
 
     filters: {
-      value: function(value, hideValues) {
+      formatCurrency: function(value, hideValues) {
         if (!value) return ''
         if (hideValues === true) return '•••••••'
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
