@@ -1,7 +1,7 @@
 <template>
   <v-container class="ma-0 pt-5 d-flex justify-space-around full-width">
     <!-- desktop layout -->
-    <v-row class="d-none d-md-flex">
+    <v-row class="d-none d-lg-flex">
       <v-col cols="12">
         <v-card color="grey lighten-3">
           <v-row>
@@ -69,8 +69,77 @@
       </v-col>
     </v-row>
 
+    <!-- tablet layout -->
+    <v-row class="d-none d-sm-flex d-md-none">
+      <v-col cols="12">
+        <v-card color="grey lighten-3">
+          <v-row>
+            <v-col class="d-flex justify-center" cols="2">
+              <v-btn icon class="toggle-button" @click="hideValues = !hideValues">
+                <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+              </v-btn>
+            </v-col>
+
+            <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
+              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <LineChart
+                :height="200"
+                :chartData="graphs.first.data"
+                :options="graphs.first.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="150"
+                :chartData="graphs.second.data"
+                :options="graphs.second.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="6">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="200"
+                :chartData="graphs.fourth.data"
+                :options="graphs.fourth.options"
+              />
+            </v-card>
+          </v-col>
+
+          <v-col cols="6">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="200"
+                :chartData="graphs.third.data"
+                :options="graphs.third.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <v-col class="max-width"> <ListGastos /><!-- TODO trocar --> </v-col>
+    </v-row>
+
     <!-- mobile layout -->
-    <v-row class="d-md-none">
+    <v-row class="d-flex d-sm-none">
       <v-col>
         <v-card color="grey lighten-3 px-4">
           <v-row>
@@ -137,7 +206,7 @@
         </v-row>
       </v-col>
 
-      <v-col style="max-width: 100vw !important;"> <ListGastos /><!-- TODO trocar --> </v-col>
+      <v-col class="max-width"> <ListGastos /><!-- TODO trocar --> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -468,6 +537,9 @@
   .full-width {
     width: 100%;
     max-width: 100vw;
+  }
+  .max-width {
+    max-width: 100vw !important;
   }
   button.toggle-button {
     height: 24px;
