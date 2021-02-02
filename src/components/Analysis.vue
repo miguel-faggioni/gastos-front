@@ -1,5 +1,6 @@
 <template>
-  <v-container class="ma-0 d-flex justify-space-around full-width">
+  <v-container class="ma-0 pt-5 d-flex justify-space-around full-width">
+    <!-- desktop layout -->
     <v-row class="d-none d-md-flex">
       <v-col cols="12">
         <v-card color="grey lighten-3">
@@ -9,6 +10,7 @@
                 <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
               </v-btn>
             </v-col>
+
             <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
               {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}
             </v-col>
@@ -16,9 +18,7 @@
         </v-card>
       </v-col>
 
-      <v-col cols="5">
-        <ListGastos />
-      </v-col>
+      <v-col cols="5"> <ListGastos /><!-- TODO trocar --> </v-col>
 
       <v-col cols="7">
         <v-row>
@@ -66,50 +66,78 @@
             </v-card>
           </v-col>
         </v-row>
-
-        <!-- <v-col>
-             <v-card color="grey lighten-3">
-             <LineChart
-             class="d-sm-none"
-             height="300"
-             :chartData="graphs.first.data" :options="graphs.first.options"
-             />
-             <LineChart
-             class="d-none d-sm-block d-md-none"
-             height="200"
-             :chartData="graphs.first.data" :options="graphs.first.options"
-             />
-             <LineChart
-             class="d-none d-md-block d-lg-none"
-             height="150"
-             :chartData="graphs.first.data" :options="graphs.first.options"
-             />
-             <LineChart
-             class="d-none d-lg-block"
-             height="100"
-             :chartData="graphs.first.data" :options="graphs.first.options"
-             />
-             </v-card>
-             </v-col> -->
-
-        <!-- <v-col>
-             <v-card color="grey lighten-3">
-             <PieChart :chartData="graphs.second.data" :options="graphs.second.options" />
-             </v-card>
-             </v-col> -->
-
-        <!-- <v-col>
-             <v-card color="grey lighten-3">
-             <PieChart :chartData="graphs.third.data" :options="graphs.third.options" />
-             </v-card>
-             </v-col> -->
-
-        <!-- <v-col>
-             <v-card color="grey lighten-3">
-             <PieChart :chartData="graphs.fourth.data" :options="graphs.fourth.options" />
-             </v-card>
-             </v-col> -->
       </v-col>
+    </v-row>
+
+    <!-- mobile layout -->
+    <v-row class="d-md-none">
+      <v-col>
+        <v-card color="grey lighten-3 px-4">
+          <v-row>
+            <v-col class="d-flex justify-center">
+              <v-btn icon class="toggle-button" @click="hideValues = !hideValues">
+                <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+              </v-btn>
+            </v-col>
+          </v-row>
+          <v-row v-for="tipo in Object.keys(sums)" :key="tipo">
+            <v-col class="d-flex justify-space-between">
+              <div class="d-inline">{{ tipo }}:</div>
+              <div class="d-inline">R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}</div>
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card color="grey lighten-3">
+          <LineChart
+            :height="300"
+            :width="300"
+            :chartData="graphs.first.data"
+            :options="graphs.first.options"
+          />
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-card color="grey lighten-3">
+          <PieChart
+            :height="200"
+            :width="250"
+            :chartData="graphs.second.data"
+            :options="graphs.second.options"
+          />
+        </v-card>
+      </v-col>
+
+      <v-col>
+        <v-row>
+          <v-col cols="6">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="150"
+                :width="150"
+                :chartData="graphs.third.data"
+                :options="Object.assign({}, graphs.third.options, { legend: { position: 'top' } })"
+              />
+            </v-card>
+          </v-col>
+
+          <v-col cols="6">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="150"
+                :width="150"
+                :chartData="graphs.fourth.data"
+                :options="Object.assign({}, graphs.fourth.options, { legend: { position: 'top' } })"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-col>
+
+      <v-col style="max-width: 100vw !important;"> <ListGastos /><!-- TODO trocar --> </v-col>
     </v-row>
   </v-container>
 </template>
@@ -430,7 +458,7 @@
       value: function(value, hideValues) {
         if (!value) return ''
         if (hideValues === true) return '•••••••'
-        return value
+        return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
       },
     },
   }
