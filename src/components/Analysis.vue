@@ -1,28 +1,116 @@
 <template>
-  <v-container>
-    <v-col>
-      <v-card color="grey lighten-3">
-        <LineChart :chartData="graphs.first.data" :options="graphs.first.options" />
-      </v-card>
-    </v-col>
+  <v-container class="ma-0 d-flex justify-space-around full-width">
+    <v-row class="d-none d-md-flex">
+      <v-col cols="12">
+        <v-card color="grey lighten-3">
+          <v-row>
+            <v-col class="d-flex justify-center">
+              <v-btn icon class="toggle-button" @click="hideValues = !hideValues">
+                <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
+              </v-btn>
+            </v-col>
+            <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
+              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | value(hideValues) }}
+            </v-col>
+          </v-row>
+        </v-card>
+      </v-col>
 
-    <v-col>
-      <v-card color="grey lighten-3">
-        <PieChart :chartData="graphs.second.data" :options="graphs.second.options" />
-      </v-card>
-    </v-col>
+      <v-col cols="5">
+        <ListGastos />
+      </v-col>
 
-    <v-col>
-      <v-card color="grey lighten-3">
-        <PieChart :chartData="graphs.third.data" :options="graphs.third.options" />
-      </v-card>
-    </v-col>
+      <v-col cols="7">
+        <v-row>
+          <v-col cols="6">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="200"
+                :chartData="graphs.fourth.data"
+                :options="graphs.fourth.options"
+              />
+            </v-card>
+          </v-col>
 
-    <v-col>
-      <v-card color="grey lighten-3">
-        <PieChart :chartData="graphs.fourth.data" :options="graphs.fourth.options" />
-      </v-card>
-    </v-col>
+          <v-col cols="6">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="200"
+                :chartData="graphs.third.data"
+                :options="graphs.third.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <LineChart
+                :height="100"
+                :chartData="graphs.first.data"
+                :options="graphs.first.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <PieChart
+                :height="150"
+                :chartData="graphs.second.data"
+                :options="graphs.second.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- <v-col>
+             <v-card color="grey lighten-3">
+             <LineChart
+             class="d-sm-none"
+             height="300"
+             :chartData="graphs.first.data" :options="graphs.first.options"
+             />
+             <LineChart
+             class="d-none d-sm-block d-md-none"
+             height="200"
+             :chartData="graphs.first.data" :options="graphs.first.options"
+             />
+             <LineChart
+             class="d-none d-md-block d-lg-none"
+             height="150"
+             :chartData="graphs.first.data" :options="graphs.first.options"
+             />
+             <LineChart
+             class="d-none d-lg-block"
+             height="100"
+             :chartData="graphs.first.data" :options="graphs.first.options"
+             />
+             </v-card>
+             </v-col> -->
+
+        <!-- <v-col>
+             <v-card color="grey lighten-3">
+             <PieChart :chartData="graphs.second.data" :options="graphs.second.options" />
+             </v-card>
+             </v-col> -->
+
+        <!-- <v-col>
+             <v-card color="grey lighten-3">
+             <PieChart :chartData="graphs.third.data" :options="graphs.third.options" />
+             </v-card>
+             </v-col> -->
+
+        <!-- <v-col>
+             <v-card color="grey lighten-3">
+             <PieChart :chartData="graphs.fourth.data" :options="graphs.fourth.options" />
+             </v-card>
+             </v-col> -->
+      </v-col>
+    </v-row>
   </v-container>
 </template>
 
@@ -30,11 +118,13 @@
   import { mapState } from 'vuex'
   import PieChart from '@/components/charts/PieChart.vue'
   import LineChart from '@/components/charts/LineChart.vue'
+  import ListGastos from '@/components/ListGastos.vue'
 
   export default {
     components: {
       PieChart,
       LineChart,
+      ListGastos,
     },
 
     async beforeCreate() {
@@ -47,6 +137,8 @@
     },
 
     data: () => ({
+      hideValues: false,
+      sums: {},
       graphs: {
         first: {
           data: {
@@ -118,6 +210,22 @@
     }),
 
     methods: {
+      lineTooltipCallback(tooltipItems, data) {
+        let value = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toFixed(0)
+        let name = data.datasets[tooltipItems.datasetIndex].label
+        let valueToShow = this.$options.filters.value(value, this.hideValues)
+        return ` ${name}: R$ ${valueToShow}`
+      },
+
+      pieTooltipCallback(tooltipItems, data) {
+        let sum = data.datasets[tooltipItems.datasetIndex].data.reduce((acc, cur) => acc + cur)
+        let value = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toFixed(0)
+        let percentage = ((value * 100) / sum).toFixed(0) + '%'
+        let name = data.labels[tooltipItems.index]
+        let valueToShow = this.$options.filters.value(value, this.hideValues)
+        return ` ${name}: R$ ${valueToShow} (${percentage})`
+      },
+
       parseGastos(gastos) {
         // empty base
         let first = {
@@ -144,17 +252,7 @@
           tooltips: {
             intersect: false,
             callbacks: {
-              label: function(tooltipItems, data) {
-                let sum = data.datasets[tooltipItems.datasetIndex].data.reduce(
-                  (acc, cur) => acc + cur
-                )
-                let value = data.datasets[tooltipItems.datasetIndex].data[
-                  tooltipItems.index
-                ].toFixed(0)
-                let percentage = ((value * 100) / sum).toFixed(0) + '%'
-                let name = data.labels[tooltipItems.index]
-                return ` ${name}: R$ ${value} (${percentage})`
-              },
+              label: this.pieTooltipCallback,
             },
           },
         }
@@ -162,6 +260,7 @@
         // iterate over the data
         gastos.forEach(gasto => {
           // parse for the first graph
+          // split by date
           let firstIndex = first.datasets.findIndex(dataset => dataset.label === gasto.tipo)
           if (firstIndex === -1) {
             first.datasets.push({
@@ -174,12 +273,19 @@
             first.datasets[firstIndex].data[gasto.data.mes] || 0
           first.datasets[firstIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
 
+          // parse for the sum of values
+          if (Object.keys(this.sums).indexOf(gasto.tipo)) {
+            this.sums[gasto.tipo] = 0
+          }
+          this.sums[gasto.tipo] += parseFloat(gasto.valor)
+
           // ignore tipo='Renda' for graphs 2,3,4
           if (gasto.tipo === 'Renda') {
             return
           }
 
           // parse for the second graph
+          // split by categoria
           let secondIndex = second.labels.indexOf(gasto.categoria.nome)
           if (secondIndex === -1) {
             second.labels.push(gasto.categoria.nome)
@@ -189,6 +295,7 @@
           second.data[secondIndex] += parseFloat(gasto.valor)
 
           // parse for the third graph
+          // split by modo_de_pagamento
           let thirdIndex = third.labels.indexOf(gasto.modo_de_pagamento.nome)
           if (thirdIndex === -1) {
             third.labels.push(gasto.modo_de_pagamento.nome)
@@ -198,6 +305,7 @@
           third.data[thirdIndex] += parseFloat(gasto.valor)
 
           // parse for the fourth graph
+          // split by tipo
           let fourthIndex = fourth.labels.indexOf(gasto.tipo)
           if (fourthIndex === -1) {
             fourth.labels.push(gasto.tipo)
@@ -238,18 +346,14 @@
             }),
           },
           options: {
+            //aspectRatio: 1400,
+            responsive: true,
+            //maintainAspectRatio: false,
             tooltips: {
               intersect: false,
               mode: 'index',
-
               callbacks: {
-                label: function(tooltipItems, data) {
-                  let value = data.datasets[tooltipItems.datasetIndex].data[
-                    tooltipItems.index
-                  ].toFixed(0)
-                  let name = data.datasets[tooltipItems.datasetIndex].label
-                  return ` ${name}: R$ ${value}`
-                },
+                label: this.lineTooltipCallback,
               },
             },
           },
@@ -268,7 +372,12 @@
               },
             ],
           },
-          options: options,
+          options: Object.assign(
+            {
+              cutoutPercentage: 100 - 61,
+            },
+            options
+          ),
         }
 
         // set third graph
@@ -316,7 +425,24 @@
         gastos: state => state.gasto.gastos,
       }),
     },
+
+    filters: {
+      value: function(value, hideValues) {
+        if (!value) return ''
+        if (hideValues === true) return '•••••••'
+        return value
+      },
+    },
   }
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+  .full-width {
+    width: 100%;
+    max-width: 100vw;
+  }
+  button.toggle-button {
+    height: 24px;
+    width: 24px;
+  }
+</style>
