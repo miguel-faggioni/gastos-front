@@ -96,7 +96,7 @@
         </v-card>
       </v-col>
 
-      <v-col>
+      <v-col cols="12">
         <v-row>
           <v-col cols="12">
             <v-card color="grey lighten-3">
@@ -144,7 +144,7 @@
         </v-row>
       </v-col>
 
-      <v-col class="max-width pt-0">
+      <v-col class="max-width pt-0" cols="12">
         <v-card color="grey lighten-3">
           <TableChart
             :chartData="gastos"
@@ -157,7 +157,7 @@
 
     <!-- mobile layout -->
     <v-row class="d-flex d-sm-none">
-      <v-col>
+      <v-col cols="12">
         <v-card color="grey lighten-3 px-4">
           <v-row>
             <v-col class="d-flex justify-center">
@@ -177,7 +177,7 @@
         </v-card>
       </v-col>
 
-      <v-col>
+      <v-col cols="12">
         <v-card color="grey lighten-3">
           <LineChart
             :height="300"
@@ -199,7 +199,7 @@
         </v-card>
       </v-col>
 
-      <v-col class="pt-0">
+      <v-col class="pt-0" cols="12">
         <v-row>
           <v-col cols="6" class="pr-2">
             <v-card color="grey lighten-3">
@@ -225,7 +225,7 @@
         </v-row>
       </v-col>
 
-      <v-col class="max-width pt-0">
+      <v-col class="max-width pt-0" cols="12">
         <v-card color="grey lighten-3">
           <TableChart
             :chartData="gastos"
