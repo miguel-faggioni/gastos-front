@@ -16,7 +16,7 @@
             </v-col>
 
             <v-col class="py-0 mr-5">
-              <v-autocomplete dense v-model="selectedYear" :items="years"> </v-autocomplete>
+              <v-select dense v-model="selectedYear" :items="years"> </v-select>
             </v-col>
           </v-row>
         </v-card>
@@ -101,7 +101,7 @@
 
       <v-col cols="12" class="pb-0">
         <v-card color="grey lighten-3 pb-0 pt-1 px-4">
-          <v-autocomplete dense v-model="selectedYear" :items="years"></v-autocomplete>
+          <v-select dense v-model="selectedYear" :items="years"></v-select>
         </v-card>
       </v-col>
 
@@ -188,7 +188,7 @@
 
       <v-col cols="12" class="pb-0">
         <v-card color="grey lighten-3 pt-1 px-4">
-          <v-autocomplete dense v-model="selectedYear" :items="years"></v-autocomplete>
+          <v-select dense v-model="selectedYear" :items="years"></v-select>
         </v-card>
       </v-col>
 
