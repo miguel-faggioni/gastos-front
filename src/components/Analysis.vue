@@ -14,6 +14,10 @@
             <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
               {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
             </v-col>
+
+            <v-col class="py-0 mr-5">
+              <v-autocomplete dense v-model="selectedYear" :items="years"> </v-autocomplete>
+            </v-col>
           </v-row>
         </v-card>
       </v-col>
@@ -21,7 +25,7 @@
       <v-col cols="5" class="pr-0">
         <v-card color="grey lighten-3">
           <TableChart
-            :chartData="gastos"
+            :chartData="graphs.fifth.data"
             :hideValues="hideValues"
             backgroundColor="grey lighten-3"
           />
@@ -96,6 +100,12 @@
         </v-card>
       </v-col>
 
+      <v-col cols="12" class="pb-0">
+        <v-card color="grey lighten-3 pb-0 pt-1 px-4">
+          <v-autocomplete dense v-model="selectedYear" :items="years"></v-autocomplete>
+        </v-card>
+      </v-col>
+
       <v-col cols="12">
         <v-row>
           <v-col cols="12">
@@ -147,7 +157,7 @@
       <v-col class="max-width pt-0" cols="12">
         <v-card color="grey lighten-3">
           <TableChart
-            :chartData="gastos"
+            :chartData="graphs.fifth.data"
             :hideValues="hideValues"
             backgroundColor="grey lighten-3"
           />
@@ -174,6 +184,12 @@
               </div>
             </v-col>
           </v-row>
+        </v-card>
+      </v-col>
+
+      <v-col cols="12" class="pb-0">
+        <v-card color="grey lighten-3 pt-1 px-4">
+          <v-autocomplete dense v-model="selectedYear" :items="years"></v-autocomplete>
         </v-card>
       </v-col>
 
@@ -228,7 +244,7 @@
       <v-col class="max-width pt-0" cols="12">
         <v-card color="grey lighten-3">
           <TableChart
-            :chartData="gastos"
+            :chartData="graphs.fifth.data"
             :hideValues="hideValues"
             backgroundColor="grey lighten-3"
           />
@@ -263,6 +279,9 @@
     data: () => ({
       hideValues: false,
       sums: {},
+      years: [],
+      selectedYear: new Date().getFullYear(),
+      allData: [],
       graphs: {
         first: {
           data: {
@@ -307,6 +326,9 @@
             ],
           },
           options: {},
+        },
+        fifth: {
+          data: [],
         },
       },
       colors: [
@@ -381,6 +403,9 @@
           },
         }
 
+        // reset the sums
+        this.sums = {}
+
         // iterate over the data
         gastos.forEach(gasto => {
           // parse for the first graph
@@ -398,7 +423,7 @@
           first.datasets[firstIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
 
           // parse for the sum of values
-          if (Object.keys(this.sums).indexOf(gasto.tipo)) {
+          if (Object.keys(this.sums).indexOf(gasto.tipo) === -1) {
             this.sums[gasto.tipo] = 0
           }
           this.sums[gasto.tipo] += parseFloat(gasto.valor)
@@ -535,18 +560,45 @@
           },
           options: options,
         }
+
+        // set fifth graph
+        this.graphs.fifth = {
+          data: gastos,
+        }
       },
     },
 
     watch: {
       gastos(newValue) {
-        this.parseGastos(newValue)
+        this.allData = newValue
+        this.parseGastos(
+          this.allData.filter(gasto => {
+            return gasto.data.ano === this.selectedYear
+          })
+        )
+      },
+      selectedYear(newValue) {
+        this.parseGastos(
+          this.allData.filter(gasto => {
+            return gasto.data.ano === newValue
+          })
+        )
       },
     },
 
     computed: {
       ...mapState({
-        gastos: state => state.gasto.gastos,
+        gastos(state) {
+          state.gasto.gastos.forEach(gasto => {
+            // parse for the available years
+            if (this.years.indexOf(gasto.data.ano) === -1) {
+              this.years.push(gasto.data.ano)
+              this.years.sort((a, b) => b - a)
+            }
+          })
+
+          return state.gasto.gastos
+        },
       }),
     },
 
