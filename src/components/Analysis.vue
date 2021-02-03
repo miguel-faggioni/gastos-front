@@ -58,9 +58,8 @@
         <v-row>
           <v-col cols="12">
             <v-card color="grey lighten-3">
-              <!-- this value (147) was hand adjusted to match the heights of both columns -->
               <LineChart
-                :height="147"
+                :height="150"
                 :chartData="graphs.first.data"
                 :options="graphs.first.options"
               />
@@ -72,7 +71,7 @@
           <v-col cols="12">
             <v-card color="grey lighten-3">
               <PieChart
-                :height="150"
+                :height="135"
                 :chartData="graphs.second.data"
                 :options="graphs.second.options"
               />
