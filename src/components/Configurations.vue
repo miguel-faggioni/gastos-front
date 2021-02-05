@@ -114,11 +114,11 @@
         </v-card-text>
         <v-card-actions>
           <v-btn color="error" text v-on:click="dialogs.eraseConfirmation = true">
-            Sim, remover todos os gastos
+            Remover
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn text @click="dialogs.erase = false">
-            Não, voltar
+            Voltar
           </v-btn>
         </v-card-actions>
       </v-card>
@@ -140,7 +140,7 @@
             :loading="loading.eraseData"
             :disabled="loading.eraseData"
           >
-            Sim, remover todos os gastos
+            Remover
           </v-btn>
           <v-spacer></v-spacer>
           <v-btn
@@ -150,7 +150,7 @@
               dialogs.eraseConfirmation = false
             "
           >
-            Não, voltar
+            Voltar
           </v-btn>
         </v-card-actions>
       </v-card>
