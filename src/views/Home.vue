@@ -66,7 +66,11 @@
 
     mounted() {
       let lastActiveTab = localStorage.getItem('home.lastActiveTab')
-      this.activeTab = lastActiveTab
+      if (lastActiveTab !== null) {
+        this.activeTab = lastActiveTab
+      } else {
+        this.activeTab = 'tab-1'
+      }
     },
 
     watch: {
