@@ -11,7 +11,7 @@ export default {
       state.debitos = debitos
     },
     push(state, debito) {
-      state.gastos.splice(0, 1, debito)
+      state.debitos.splice(0, 0, debito)
     },
     removeById(state, id) {
       let indexToRemove = state.debitos.findIndex(debito => debito.id === id)

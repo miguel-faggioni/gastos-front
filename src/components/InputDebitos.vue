@@ -239,7 +239,7 @@
       limpar: function() {
         this.$v.debito.$reset()
         this.debito.valor = null
-        this.gasto.obs = ''
+        this.debito.obs = ''
       },
       customFilter: function(item, queryText) {
         const textOne = item.nome.toLowerCase()

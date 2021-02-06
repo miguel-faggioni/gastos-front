@@ -12,7 +12,7 @@ export default {
       state.gastos = gastos
     },
     push(state, gasto) {
-      state.gastos.splice(0, 1, gasto)
+      state.gastos.splice(0, 0, gasto)
     },
     removeById(state, id) {
       let indexToRemove = state.gastos.findIndex(gasto => gasto.id === id)

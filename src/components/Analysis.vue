@@ -12,6 +12,8 @@
              ? 'tablet'
              : 'mobile'
              }}
+         -
+           {{lastSize}}
            </v-card>
            </v-col> -->
 
@@ -202,6 +204,8 @@
     mounted() {
       // shuffle colors
       this.colors.shuffle()
+      // save the screen size
+      this.lastSize = this.$vuetify.breakpoint.name
       // add watcher on screen resize
       window.addEventListener('resize', this.onResize, { passive: true })
     },
@@ -212,6 +216,7 @@
     },
 
     data: () => ({
+      lastSize: null,
       hideValues: false,
       sums: {},
       years: [],
@@ -305,6 +310,11 @@
 
     methods: {
       onResize() {
+        let currentSize = this.$vuetify.breakpoint.name
+        if (currentSize === this.lastSize) {
+          return
+        }
+        this.lastSize = this.$vuetify.breakpoint.name
         this.show = false
         setTimeout(() => {
           this.show = true
@@ -325,6 +335,26 @@
         let name = data.labels[tooltipItems.index]
         let valueToShow = this.$options.filters.formatCurrency(value, this.hideValues)
         return ` ${name}: R$ ${valueToShow} (${percentage})`
+      },
+
+      fillBaseForLineGraph(data) {
+        let now = new Date()
+        let base = [null, null, null, null, null, null, null, null, null, null, null, null]
+        if (data.ano < now.getFullYear()) {
+          // for a previous year, set all base values as 0
+          base = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        } else {
+          // for current year, set 0 only until current month
+          base = base.map((value, month) => {
+            if (month <= data.mes) {
+              return 0
+            } else {
+              return null
+            }
+          })
+        }
+
+        return base
       },
 
       parseGastos(gastos) {
@@ -372,7 +402,7 @@
           if (firstIndex === -1) {
             first.datasets.push({
               label: gasto.tipo,
-              data: [null, null, null, null, null, null, null, null, null, null, null, null],
+              data: this.fillBaseForLineGraph(gasto.data),
             })
             firstIndex = first.datasets.length - 1
           }
@@ -429,7 +459,7 @@
           if (sixthIndex === -1) {
             sixth.datasets.push({
               label: gasto.categoria.nome,
-              data: [null, null, null, null, null, null, null, null, null, null, null, null],
+              data: this.fillBaseForLineGraph(gasto.data),
             })
             sixthIndex = sixth.datasets.length - 1
           }
