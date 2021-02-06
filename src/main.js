@@ -10,6 +10,7 @@ import Vuelidate from 'vuelidate'
 import './plugins/axios'
 import './plugins/date'
 import './plugins/array'
+import './plugins/sentry'
 
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)
