@@ -15,5 +15,11 @@ module.exports = {
         maxSize: 250000,
       }
     }
-  }
+  },
+  pwa: {
+    name: 'Gastos',
+    workboxOptions: {
+      skipWaiting: true
+    }
+  },
 }
