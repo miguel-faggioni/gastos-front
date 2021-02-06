@@ -11,7 +11,10 @@
                 ref="nome"
                 required
                 :error-messages="nomeErrors"
-                @input="$v.nome.$touch()"
+                @input="
+                  $v.nome.$touch()
+                  createSigla()
+                "
                 @blur="$v.nome.$touch()"
                 v-on:keyup.enter="$refs.sigla.focus()"
               ></v-text-field>
@@ -25,7 +28,10 @@
                 v-model="sigla"
                 required
                 :error-messages="siglaErrors"
-                @input="$v.sigla.$touch()"
+                @input="
+                  $v.sigla.$touch()
+                  okToEditSigla = false
+                "
                 @blur="$v.sigla.$touch()"
                 v-on:keyup.enter="$refs.icone.focus()"
               ></v-text-field>
@@ -84,6 +90,7 @@
       nome: null,
       sigla: null,
       icone: null,
+      okToEditSigla: true,
     }),
 
     methods: {
@@ -108,9 +115,36 @@
         this.nome = null
         this.sigla = null
         this.icone = null
+        this.okToEditSigla = true
       },
       fechar: function() {
         this.$emit('update:show', false)
+      },
+      createSigla() {
+        // don't change anything if there's user input already
+        if (this.okToEditSigla === false) {
+          return
+        }
+        // if there are multiple words
+        if (
+          this.nome.indexOf(' ') !== -1 ||
+          this.nome.indexOf('-') !== -1 ||
+          this.nome.indexOf('/') !== -1 ||
+          this.nome.indexOf('\\') !== -1 ||
+          this.nome.indexOf('_') !== -1
+        ) {
+          // copy and replace non space characters
+          let nome = this.nome
+            .replace('-', ' ')
+            .replace('/', ' ')
+            .replace('\\', ' ')
+            .replace('_', ' ')
+          // get the first letter of each word
+          this.sigla = nome.match(/\b(\w)/g).join('')
+        } else {
+          // otherwise, get the first 3 letters
+          this.sigla = this.nome.slice(0, 3)
+        }
       },
     },
 

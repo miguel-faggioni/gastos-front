@@ -31,7 +31,10 @@
             ref="nome"
             required
             :error-messages="nomeErrors"
-            @input="$v.categoria.nome.$touch()"
+            @input="
+              $v.categoria.nome.$touch()
+              createSigla()
+            "
             @blur="$v.categoria.nome.$touch()"
             v-on:keyup.enter="$refs.sigla.focus()"
           ></v-text-field>
@@ -45,7 +48,10 @@
             v-model="categoria.sigla"
             required
             :error-messages="siglaErrors"
-            @input="$v.categoria.sigla.$touch()"
+            @input="
+              $v.categoria.sigla.$touch()
+              okToEditSigla = false
+            "
             @blur="$v.categoria.sigla.$touch()"
             v-on:keyup.enter="$refs.icone.focus()"
           ></v-text-field>
@@ -138,6 +144,7 @@
     },
 
     data: () => ({
+      okToEditSigla: true,
       loading: {
         salvar: false,
         remover: false,
@@ -167,8 +174,10 @@
       categoria(newValue) {
         this.$v.$reset()
         if (newValue.icone === null) {
+          this.okToEditSigla = true
           this.icons.categoria = 'credit_card'
         } else {
+          this.okToEditSigla = false
           this.icons.categoria = newValue.icone
         }
       },
@@ -254,6 +263,32 @@
         const searchText = queryText.toLowerCase()
 
         return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
+      },
+      createSigla() {
+        // don't change anything if there's user input already
+        if (this.okToEditSigla === false) {
+          return
+        }
+        // if there are multiple words
+        if (
+          this.categoria.nome.indexOf(' ') !== -1 ||
+          this.categoria.nome.indexOf('-') !== -1 ||
+          this.categoria.nome.indexOf('/') !== -1 ||
+          this.categoria.nome.indexOf('\\') !== -1 ||
+          this.categoria.nome.indexOf('_') !== -1
+        ) {
+          // copy and replace non space characters
+          let nome = this.categoria.nome
+            .replace('-', ' ')
+            .replace('/', ' ')
+            .replace('\\', ' ')
+            .replace('_', ' ')
+          // get the first letter of each word
+          this.categoria.sigla = nome.match(/\b(\w)/g).join('')
+        } else {
+          // otherwise, get the first 3 letters
+          this.categoria.sigla = this.categoria.nome.slice(0, 3)
+        }
       },
     },
 

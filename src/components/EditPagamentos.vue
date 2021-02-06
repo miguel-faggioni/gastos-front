@@ -31,7 +31,10 @@
             ref="nome"
             required
             :error-messages="nomeErrors"
-            @input="$v.modo_de_pagamento.nome.$touch()"
+            @input="
+              $v.modo_de_pagamento.nome.$touch()
+              createSigla()
+            "
             @blur="$v.modo_de_pagamento.nome.$touch()"
             v-on:keyup.enter="$refs.sigla.focus()"
           ></v-text-field>
@@ -45,7 +48,10 @@
             v-model="modo_de_pagamento.sigla"
             required
             :error-messages="siglaErrors"
-            @input="$v.modo_de_pagamento.sigla.$touch()"
+            @input="
+              $v.modo_de_pagamento.sigla.$touch()
+              okToEditSigla = false
+            "
             @blur="$v.modo_de_pagamento.sigla.$touch()"
             v-on:keyup.enter="$refs.icone.focus()"
           ></v-text-field>
@@ -138,6 +144,7 @@
     },
 
     data: () => ({
+      okToEditSigla: true,
       loading: {
         salvar: false,
         remover: false,
@@ -167,8 +174,10 @@
       modo_de_pagamento(newValue) {
         this.$v.$reset()
         if (newValue.icone === null) {
+          this.okToEditSigla = true
           this.icons.modo_de_pagamento = 'credit_card'
         } else {
+          this.okToEditSigla = false
           this.icons.modo_de_pagamento = newValue.icone
         }
       },
@@ -254,6 +263,32 @@
         const searchText = queryText.toLowerCase()
 
         return textOne.indexOf(searchText) > -1 || textTwo.indexOf(searchText) > -1
+      },
+      createSigla() {
+        // don't change anything if there's user input already
+        if (this.okToEditSigla === false) {
+          return
+        }
+        // if there are multiple words
+        if (
+          this.modo_de_pagamento.nome.indexOf(' ') !== -1 ||
+          this.modo_de_pagamento.nome.indexOf('-') !== -1 ||
+          this.modo_de_pagamento.nome.indexOf('/') !== -1 ||
+          this.modo_de_pagamento.nome.indexOf('\\') !== -1 ||
+          this.modo_de_pagamento.nome.indexOf('_') !== -1
+        ) {
+          // copy and replace non space characters
+          let nome = this.modo_de_pagamento.nome
+            .replace('-', ' ')
+            .replace('/', ' ')
+            .replace('\\', ' ')
+            .replace('_', ' ')
+          // get the first letter of each word
+          this.modo_de_pagamento.sigla = nome.match(/\b(\w)/g).join('')
+        } else {
+          // otherwise, get the first 3 letters
+          this.modo_de_pagamento.sigla = this.modo_de_pagamento.nome.slice(0, 3)
+        }
       },
     },
 
