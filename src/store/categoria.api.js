@@ -38,6 +38,20 @@ export default {
     push(state, categoria) {
       state.categorias.push(categoria)
     },
+    update(state, updatedCategoria) {
+      let indexToUpdate = state.categorias.findIndex(
+        categoria => categoria.id === updatedCategoria.id
+      )
+      if (indexToUpdate !== -1) {
+        state.categorias.splice(indexToUpdate, 1, updatedCategoria)
+      }
+    },
+    removeById(state, id) {
+      let indexToRemove = state.categorias.findIndex(categoria => categoria.id === id)
+      if (indexToRemove !== -1) {
+        state.categorias.splice(indexToRemove, 1)
+      }
+    },
   },
   actions: {
     // asynchronous
@@ -54,6 +68,32 @@ export default {
         })
         .then(response => {
           context.commit('push', response.data)
+        })
+    },
+    async update(context, { id, nome, sigla, icone }) {
+      return axios
+        .put(`/categorias/${id}`, {
+          nome: nome,
+          sigla: sigla,
+          icone: icone,
+        })
+        .then(response => {
+          context.commit('update', response.data)
+        })
+    },
+    async delete(context, { id, replaceId }) {
+      return axios
+        .delete(`/categorias/${id}`, {
+          params: {
+            substituirPor: replaceId,
+          },
+        })
+        .then(() => {
+          context.commit('removeById', id)
+          if (replaceId !== undefined) {
+            // refetch all Gastos
+            context.dispatch('gasto/get', null, { root: true })
+          }
         })
     },
   },
