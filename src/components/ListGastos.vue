@@ -276,6 +276,8 @@
           String(item.valor).indexOf(search) !== -1 ||
           item.categoria.sigla.toLowerCase().indexOf(search) !== -1 ||
           item.categoria.nome.toLowerCase().indexOf(search) !== -1 ||
+          item.modo_de_pagamento.sigla.toLowerCase().indexOf(search) !== -1 ||
+          item.modo_de_pagamento.nome.toLowerCase().indexOf(search) !== -1 ||
           String(item.date.getDate()).indexOf(search) !== -1 ||
           item.date
             .getDayOfWeekAbbreviation(item.date.getDay())
