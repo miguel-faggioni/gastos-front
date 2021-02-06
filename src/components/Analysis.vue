@@ -61,7 +61,7 @@
       <v-col
         :cols="$vuetify.breakpoint.lgAndUp ? 6 : 12"
         class="order-3"
-        :class="$vuetify.breakpoint.lgAndUp ? 'pr-0' : null"
+        :class="$vuetify.breakpoint.lgAndUp ? 'pr-2' : null"
       >
         <v-row>
           <v-col cols="12">
@@ -69,7 +69,7 @@
               <!-- line chart by Tipo -->
               <LineChart
                 :height="
-                  $vuetify.breakpoint.lgAndUp ? 150 : $vuetify.breakpoint.smAndUp ? 200 : 300
+                  $vuetify.breakpoint.lgAndUp ? 150 : $vuetify.breakpoint.smAndUp ? 150 : 300
                 "
                 :width="
                   $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 300
@@ -81,8 +81,8 @@
           </v-col>
         </v-row>
 
-        <v-row
-          ><v-col cols="12">
+        <v-row>
+          <v-col cols="12">
             <v-card color="grey lighten-3">
               <!-- doughnut chart by Categoria -->
               <PieChart
@@ -95,22 +95,41 @@
                 :chartData="graphs.second.data"
                 :options="graphs.second.options"
               />
-            </v-card> </v-col
-        ></v-row>
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
 
-      <!-- pie chart by Pagamento & Tipo & table of values-->
+      <!-- line chart by Categoria & pie chart by Pagamento & pie chart by Tipo & table of values-->
       <v-col
         :cols="$vuetify.breakpoint.lgAndUp ? 6 : 12"
-        :class="$vuetify.breakpoint.lgAndUp ? 'order-4' : 'order-5 pt-0'"
+        :class="$vuetify.breakpoint.lgAndUp ? 'order-4 pl-2' : 'order-5 pt-0'"
       >
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <!-- line chart by Categoria -->
+              <LineChart
+                :height="
+                  $vuetify.breakpoint.lgAndUp ? 150 : $vuetify.breakpoint.smAndUp ? 150 : 400
+                "
+                :width="
+                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 300
+                "
+                :chartData="graphs.sixth.data"
+                :options="graphs.sixth.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
         <v-row>
           <v-col cols="6" class="pr-2">
             <v-card color="grey lighten-3">
               <!-- pie chart by Pagamento -->
               <PieChart
                 :height="
-                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 150 : 150
+                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 150 : 200
                 "
                 :width="
                   $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 150
@@ -130,7 +149,7 @@
               <!-- pie chart by Tipo -->
               <PieChart
                 :height="
-                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 150 : 150
+                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 150 : 200
                 "
                 :width="
                   $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 150
@@ -246,6 +265,17 @@
         fifth: {
           data: [],
         },
+        sixth: {
+          data: {
+            labels: [],
+            datasets: [
+              {
+                data: [],
+              },
+            ],
+          },
+          options: {},
+        },
       },
       colors: [
         // colors taken from https://davidmathlogic.com/colorblind/
@@ -269,6 +299,7 @@
         '#D55E00',
         '#CC79A7',
       ],
+      months: ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'],
       show: true,
     }),
 
@@ -312,6 +343,9 @@
         let fourth = {
           labels: [],
           data: [],
+        }
+        let sixth = {
+          datasets: [],
         }
 
         // default options
@@ -386,29 +420,31 @@
             fourthIndex = fourth.labels.length - 1
           }
           fourth.data[fourthIndex] += parseFloat(gasto.valor)
+
+          // parse for the sixth graph
+          // split by date
+          let sixthIndex = sixth.datasets.findIndex(
+            dataset => dataset.label === gasto.categoria.nome
+          )
+          if (sixthIndex === -1) {
+            sixth.datasets.push({
+              label: gasto.categoria.nome,
+              data: [null, null, null, null, null, null, null, null, null, null, null, null],
+            })
+            sixthIndex = sixth.datasets.length - 1
+          }
+          sixth.datasets[sixthIndex].data[gasto.data.mes] =
+            sixth.datasets[sixthIndex].data[gasto.data.mes] || 0
+          sixth.datasets[sixthIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
         })
 
         // set first graph
         this.graphs.first = {
           data: {
-            labels: [
-              'Jan',
-              'Fev',
-              'Mar',
-              'Abr',
-              'Mai',
-              'Jun',
-              'Jul',
-              'Ago',
-              'Set',
-              'Out',
-              'Nov',
-              'Dez',
-            ],
+            labels: this.months,
             datasets: first.datasets.map((dataset, i) => {
               return Object.assign(
                 {
-                  //borderWidth: 0,
                   backgroundColor: this.colors[i],
                   borderColor: this.colors[i],
                   fill: false,
@@ -419,9 +455,7 @@
             }),
           },
           options: {
-            //aspectRatio: 1400,
             responsive: true,
-            //maintainAspectRatio: false,
             tooltips: {
               intersect: false,
               mode: 'index',
@@ -488,6 +522,34 @@
         // set fifth graph
         this.graphs.fifth = {
           data: gastos,
+        }
+
+        // set sixth graph
+        this.graphs.sixth = {
+          data: {
+            labels: this.months,
+            datasets: sixth.datasets.map((dataset, i) => {
+              return Object.assign(
+                {
+                  backgroundColor: this.colors[i],
+                  borderColor: this.colors[i],
+                  fill: false,
+                  pointRadius: 0,
+                },
+                dataset
+              )
+            }),
+          },
+          options: {
+            responsive: true,
+            tooltips: {
+              intersect: false,
+              mode: 'index',
+              callbacks: {
+                label: this.lineTooltipCallback,
+              },
+            },
+          },
         }
       },
     },
