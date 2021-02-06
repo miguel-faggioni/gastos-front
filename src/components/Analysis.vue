@@ -1,65 +1,79 @@
 <template>
   <v-container class="ma-0 pt-5 d-flex justify-space-around full-width">
-    <!-- desktop layout -->
-    <v-row class="d-none d-lg-flex">
-      <v-col cols="12">
+    <v-row v-if="show"
+      ><!-- the `show` variable is used to flash the graphs when screen size changes -->
+      <!-- debug info -->
+      <!-- <v-col cols="12">
+           <v-card color="grey lighten-3" @click="onResize()">
+           {{
+             $vuetify.breakpoint.lgAndUp
+             ? 'desktop'
+             : $vuetify.breakpoint.smAndUp
+             ? 'tablet'
+             : 'mobile'
+             }}
+           </v-card>
+           </v-col> -->
+
+      <!-- sum of all info -->
+      <v-col
+        :cols="$vuetify.breakpoint.lgAndUp ? 9 : 12"
+        class="order-1"
+        :class="$vuetify.breakpoint.lgAndUp ? 'pr-2' : null"
+      >
         <v-card color="grey lighten-3">
           <v-row>
             <v-col class="d-flex justify-center">
+              <!-- toggle values visibility -->
               <v-btn icon class="toggle-button" @click="hideValues = !hideValues">
                 <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
               </v-btn>
             </v-col>
 
-            <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
-              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
-            </v-col>
-
-            <v-col class="py-0 mr-5">
-              <v-select dense v-model="selectedYear" :items="years"> </v-select>
+            <!-- sum of values by Tipo -->
+            <v-col
+              v-for="tipo in Object.keys(sums)"
+              :key="tipo"
+              :cols="$vuetify.breakpoint.lgAndUp ? 3 : $vuetify.breakpoint.smAndUp ? 6 : 12"
+            >
+              <v-container class="ma-0 pa-0" :class="$vuetify.breakpoint.lgAndUp ? null : 'px-2'">
+                {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
+              </v-container>
             </v-col>
           </v-row>
         </v-card>
       </v-col>
 
-      <v-col cols="5" class="pr-0">
+      <!-- year selector -->
+      <v-col
+        :cols="$vuetify.breakpoint.lgAndUp ? 3 : 12"
+        class="order-2"
+        :class="$vuetify.breakpoint.lgAndUp ? 'pl-2' : 'mt-3'"
+      >
         <v-card color="grey lighten-3">
-          <TableChart
-            :chartData="graphs.fifth.data"
-            :hideValues="hideValues"
-            backgroundColor="grey lighten-3"
-          />
+          <v-row class="px-5">
+            <v-select dense v-model="selectedYear" :items="years"></v-select>
+          </v-row>
         </v-card>
-
-        <v-row class="pt-3">
-          <v-col cols="6" class="pr-2">
-            <v-card color="grey lighten-3">
-              <PieChart
-                :height="200"
-                :chartData="graphs.fourth.data"
-                :options="graphs.fourth.options"
-              />
-            </v-card>
-          </v-col>
-
-          <v-col cols="6" class="pl-2">
-            <v-card color="grey lighten-3">
-              <PieChart
-                :height="200"
-                :chartData="graphs.third.data"
-                :options="graphs.third.options"
-              />
-            </v-card>
-          </v-col>
-        </v-row>
       </v-col>
 
-      <v-col cols="7">
+      <!-- line chart by Tipo & doughnut chart by Categoria -->
+      <v-col
+        :cols="$vuetify.breakpoint.lgAndUp ? 6 : 12"
+        class="order-3"
+        :class="$vuetify.breakpoint.lgAndUp ? 'pr-0' : null"
+      >
         <v-row>
           <v-col cols="12">
             <v-card color="grey lighten-3">
+              <!-- line chart by Tipo -->
               <LineChart
-                :height="150"
+                :height="
+                  $vuetify.breakpoint.lgAndUp ? 150 : $vuetify.breakpoint.smAndUp ? 200 : 300
+                "
+                :width="
+                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 300
+                "
                 :chartData="graphs.first.data"
                 :options="graphs.first.options"
               />
@@ -67,187 +81,83 @@
           </v-col>
         </v-row>
 
-        <v-row>
-          <v-col cols="12">
+        <v-row
+          ><v-col cols="12">
             <v-card color="grey lighten-3">
+              <!-- doughnut chart by Categoria -->
               <PieChart
-                :height="135"
+                :height="
+                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 115 : 125
+                "
+                :width="
+                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 150
+                "
                 :chartData="graphs.second.data"
                 :options="graphs.second.options"
               />
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-    </v-row>
-
-    <!-- tablet layout -->
-    <v-row class="d-none d-sm-flex d-md-none">
-      <v-col cols="12">
-        <v-card color="grey lighten-3">
-          <v-row>
-            <v-col class="d-flex justify-center" cols="2">
-              <v-btn icon class="toggle-button" @click="hideValues = !hideValues">
-                <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
-              </v-btn>
-            </v-col>
-
-            <v-col v-for="tipo in Object.keys(sums)" :key="tipo">
-              {{ tipo }}: R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
-            </v-col>
-          </v-row>
-        </v-card>
+            </v-card> </v-col
+        ></v-row>
       </v-col>
 
-      <v-col cols="12" class="pb-0">
-        <v-card color="grey lighten-3 pb-0 pt-1 px-4">
-          <v-select dense v-model="selectedYear" :items="years"></v-select>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12">
-        <v-row>
-          <v-col cols="12">
-            <v-card color="grey lighten-3">
-              <LineChart
-                :height="200"
-                :chartData="graphs.first.data"
-                :options="graphs.first.options"
-              />
-            </v-card>
-          </v-col>
-        </v-row>
-
-        <v-row>
-          <v-col cols="12">
-            <v-card color="grey lighten-3">
-              <PieChart
-                :height="150"
-                :chartData="graphs.second.data"
-                :options="graphs.second.options"
-              />
-            </v-card>
-          </v-col>
-        </v-row>
-
+      <!-- pie chart by Pagamento & Tipo & table of values-->
+      <v-col
+        :cols="$vuetify.breakpoint.lgAndUp ? 6 : 12"
+        :class="$vuetify.breakpoint.lgAndUp ? 'order-4' : 'order-5 pt-0'"
+      >
         <v-row>
           <v-col cols="6" class="pr-2">
             <v-card color="grey lighten-3">
+              <!-- pie chart by Pagamento -->
               <PieChart
-                :height="200"
-                :chartData="graphs.fourth.data"
-                :options="graphs.fourth.options"
+                :height="
+                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 150 : 150
+                "
+                :width="
+                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 150
+                "
+                :chartData="graphs.third.data"
+                :options="
+                  $vuetify.breakpoint.smAndUp
+                    ? graphs.third.options
+                    : Object.assign({}, graphs.third.options, { legend: { position: 'top' } })
+                "
               />
             </v-card>
           </v-col>
 
           <v-col cols="6" class="pl-2">
             <v-card color="grey lighten-3">
+              <!-- pie chart by Tipo -->
               <PieChart
-                :height="200"
-                :chartData="graphs.third.data"
-                :options="graphs.third.options"
-              />
-            </v-card>
-          </v-col>
-        </v-row>
-      </v-col>
-
-      <v-col class="max-width pt-0" cols="12">
-        <v-card color="grey lighten-3">
-          <TableChart
-            :chartData="graphs.fifth.data"
-            :hideValues="hideValues"
-            backgroundColor="grey lighten-3"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- mobile layout -->
-    <v-row class="d-flex d-sm-none">
-      <v-col cols="12">
-        <v-card color="grey lighten-3 px-4">
-          <v-row>
-            <v-col class="d-flex justify-center">
-              <v-btn icon class="toggle-button" @click="hideValues = !hideValues">
-                <v-icon>{{ hideValues ? 'mdi-eye' : 'mdi-eye-off' }}</v-icon>
-              </v-btn>
-            </v-col>
-          </v-row>
-          <v-row v-for="tipo in Object.keys(sums)" :key="tipo">
-            <v-col class="d-flex justify-space-between">
-              <div class="d-inline">{{ tipo }}:</div>
-              <div class="d-inline">
-                R$ {{ sums[tipo].toFixed(2) | formatCurrency(hideValues) }}
-              </div>
-            </v-col>
-          </v-row>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12" class="pb-0">
-        <v-card color="grey lighten-3 pt-1 px-4">
-          <v-select dense v-model="selectedYear" :items="years"></v-select>
-        </v-card>
-      </v-col>
-
-      <v-col cols="12">
-        <v-card color="grey lighten-3">
-          <LineChart
-            :height="300"
-            :width="300"
-            :chartData="graphs.first.data"
-            :options="graphs.first.options"
-          />
-        </v-card>
-      </v-col>
-
-      <v-col class="pt-0">
-        <v-card color="grey lighten-3">
-          <PieChart
-            :height="200"
-            :width="250"
-            :chartData="graphs.second.data"
-            :options="graphs.second.options"
-          />
-        </v-card>
-      </v-col>
-
-      <v-col class="pt-0" cols="12">
-        <v-row>
-          <v-col cols="6" class="pr-2">
-            <v-card color="grey lighten-3">
-              <PieChart
-                :height="150"
-                :width="150"
-                :chartData="graphs.third.data"
-                :options="Object.assign({}, graphs.third.options, { legend: { position: 'top' } })"
-              />
-            </v-card>
-          </v-col>
-
-          <v-col cols="6" class="pl-2">
-            <v-card color="grey lighten-3">
-              <PieChart
-                :height="150"
-                :width="150"
+                :height="
+                  $vuetify.breakpoint.lgAndUp ? 125 : $vuetify.breakpoint.smAndUp ? 150 : 150
+                "
+                :width="
+                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 150
+                "
                 :chartData="graphs.fourth.data"
-                :options="Object.assign({}, graphs.fourth.options, { legend: { position: 'top' } })"
+                :options="
+                  $vuetify.breakpoint.smAndUp
+                    ? graphs.fourth.options
+                    : Object.assign({}, graphs.fourth.options, { legend: { position: 'top' } })
+                "
               />
             </v-card>
           </v-col>
         </v-row>
-      </v-col>
 
-      <v-col class="max-width pt-0" cols="12">
-        <v-card color="grey lighten-3">
-          <TableChart
-            :chartData="graphs.fifth.data"
-            :hideValues="hideValues"
-            backgroundColor="grey lighten-3"
-          />
-        </v-card>
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <!-- table of values -->
+              <TableChart
+                :chartData="graphs.fifth.data"
+                :hideValues="hideValues"
+                backgroundColor="grey lighten-3"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
       </v-col>
     </v-row>
   </v-container>
@@ -270,9 +180,16 @@
       await Promise.all([this.$store.dispatch('gasto/get')])
     },
 
-    async mounted() {
+    mounted() {
       // shuffle colors
       this.colors.shuffle()
+      // add watcher on screen resize
+      window.addEventListener('resize', this.onResize, { passive: true })
+    },
+
+    beforeDestroy() {
+      // remove watcher on screen resize
+      window.removeEventListener('resize', this.onResize, { passive: true })
     },
 
     data: () => ({
@@ -352,9 +269,17 @@
         '#D55E00',
         '#CC79A7',
       ],
+      show: true,
     }),
 
     methods: {
+      onResize() {
+        this.show = false
+        setTimeout(() => {
+          this.show = true
+        }, 200) // any less than 200ms and the graphs don't resize correctly
+      },
+
       lineTooltipCallback(tooltipItems, data) {
         let value = data.datasets[tooltipItems.datasetIndex].data[tooltipItems.index].toFixed(0)
         let name = data.datasets[tooltipItems.datasetIndex].label
@@ -599,6 +524,13 @@
           return state.gasto.gastos
         },
       }),
+      screenSize() {
+        switch (this.$vuetify.breakpoint.name) {
+          default:
+            this.flashGraphs()
+        }
+        return this.$vuetify.breakpoint.name
+      },
     },
 
     filters: {
