@@ -1,31 +1,67 @@
 <template>
   <v-container class="d-flex flex-column align-start min-height">
-    <v-btn @click="dialogs.download = true" outlined class="mb-8 mt-2 full-width" color="primary">
+    <!-- edit categorias -->
+    <v-btn @click="dialogs.editCategoria = true" outlined class="mb-5 full-width">
+      Editar categorias
+    </v-btn>
+
+    <!-- edit categorias dialog -->
+    <v-dialog v-model="dialogs.editCategoria" fullscreen>
+      <v-card>
+        <v-btn icon @click="dialogs.editCategoria = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <EditCategorias />
+      </v-card>
+    </v-dialog>
+
+    <!-- edit pagamentos -->
+    <v-btn @click="dialogs.editPagamento = true" outlined class="mb-5 full-width">
+      Editar modos de pagamento
+    </v-btn>
+
+    <!-- edit pagamentos dialog -->
+    <v-dialog v-model="dialogs.editPagamento" fullscreen>
+      <v-card>
+        <v-btn icon @click="dialogs.editPagamento = false">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+        <EditPagamentos />
+      </v-card>
+    </v-dialog>
+
+    <!-- download all -->
+    <v-btn @click="dialogs.download = true" outlined class="mt-2 mb-5 full-width" color="primary">
       <v-icon left>
         mdi-cash-multiple
       </v-icon>
       Baixar gastos
     </v-btn>
 
-    <v-btn @click="dialogs.erase = true" outlined class="mb-5 full-width" color="error">
+    <!-- remove all -->
+    <v-btn @click="dialogs.erase = true" outlined class="mt-2 mb-5 full-width" color="error">
       <v-icon left>
         mdi-cash-remove
       </v-icon>
       Apagar gastos
     </v-btn>
 
+    <!-- feedback -->
     <v-btn class="mt-auto align-self-center" text v-on:click="dialogs.feedback = true">
       Fale conosco
     </v-btn>
 
+    <!-- about -->
     <v-btn class="mt-5 align-self-center" text v-on:click="dialogs.about = true">
       Sobre o aplicativo
     </v-btn>
 
+    <!-- logout -->
     <v-btn class="mt-5 align-self-center" text color="error" v-on:click="logout()">
       Logout
     </v-btn>
 
+    <!-- generic snackbar -->
     <v-snackbar v-model="snackbar.show" :timeout="snackbar.timeout">
       {{ snackbar.msg }}
       <template v-slot:action="{ attrs }">
@@ -35,6 +71,7 @@
       </template>
     </v-snackbar>
 
+    <!-- download dialog -->
     <v-dialog v-model="dialogs.download">
       <v-card>
         <v-card-text>
@@ -102,6 +139,7 @@
       </v-card>
     </v-dialog>
 
+    <!-- remove dialog 1/2 -->
     <v-dialog v-model="dialogs.erase">
       <v-card>
         <v-card-title>
@@ -124,6 +162,7 @@
       </v-card>
     </v-dialog>
 
+    <!-- remove dialog 2/2 -->
     <v-dialog v-model="dialogs.eraseConfirmation">
       <v-card>
         <v-card-title>
@@ -156,6 +195,7 @@
       </v-card>
     </v-dialog>
 
+    <!-- dialog about -->
     <v-dialog v-model="dialogs.about" fullscreen>
       <v-card>
         <v-btn icon @click="dialogs.about = false">
@@ -165,6 +205,7 @@
       </v-card>
     </v-dialog>
 
+    <!-- dialog feedback -->
     <v-dialog v-model="dialogs.feedback" fullscreen>
       <v-card>
         <v-btn icon @click="dialogs.feedback = false">
@@ -181,6 +222,8 @@
   import { required } from 'vuelidate/lib/validators'
   import About from '@/views/About.vue'
   import Feedback from '@/views/Feedback.vue'
+  import EditCategorias from '@/components/EditCategorias.vue'
+  import EditPagamentos from '@/components/EditPagamentos.vue'
 
   export default {
     mixins: [validationMixin],
@@ -188,6 +231,8 @@
     components: {
       About,
       Feedback,
+      EditCategorias,
+      EditPagamentos,
     },
 
     data: () => ({
@@ -206,6 +251,8 @@
         eraseConfirmation: false,
         about: false,
         feedback: false,
+        editPagamento: false,
+        editCategoria: false,
       },
       downloadDetails: {
         periodMenu: false,
@@ -374,7 +421,7 @@
 
 <style scoped lang="scss">
   .min-height {
-    min-height: 500px;
+    min-height: 700px;
   }
   .full-width {
     width: 100%;
