@@ -63,6 +63,17 @@
     data: () => ({
       activeTab: null,
     }),
+
+    mounted() {
+      let lastActiveTab = localStorage.getItem('home.lastActiveTab')
+      this.activeTab = lastActiveTab
+    },
+
+    watch: {
+      activeTab(newValue) {
+        localStorage.setItem('home.lastActiveTab', newValue)
+      },
+    },
   }
 </script>
 
