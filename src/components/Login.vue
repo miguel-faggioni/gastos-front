@@ -32,6 +32,13 @@
         </v-btn>
       </v-row>
     </form>
+    <v-row class="mt-10">
+      <v-col>
+        <p class="caption">Se quiser testar use as credenciais de demo:</p>
+        <p class="caption mb-0">Email: email@falso.com</p>
+        <p class="caption">Senha: 1234</p>
+      </v-col>
+    </v-row>
     <v-snackbar v-model="snackbar.show" :timeout="snackbar.timeout">
       {{ snackbar.msg }}
       <template v-slot:action="{ attrs }">
