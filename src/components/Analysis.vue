@@ -380,13 +380,34 @@
 
         // default options
         let options = {
-          legend: {
-            position: 'right',
+          pie: {
+            legend: {
+              position: 'right',
+            },
+            tooltips: {
+              intersect: false,
+              callbacks: {
+                label: this.pieTooltipCallback,
+              },
+            },
           },
-          tooltips: {
-            intersect: false,
-            callbacks: {
-              label: this.pieTooltipCallback,
+          line: {
+            responsive: true,
+            tooltips: {
+              intersect: false,
+              mode: 'index',
+              callbacks: {
+                label: this.lineTooltipCallback,
+              },
+            },
+            scales: {
+              yAxes: [
+                {
+                  ticks: {
+                    beginAtZero: true,
+                  },
+                },
+              ],
             },
           },
         }
@@ -484,16 +505,7 @@
               )
             }),
           },
-          options: {
-            responsive: true,
-            tooltips: {
-              intersect: false,
-              mode: 'index',
-              callbacks: {
-                label: this.lineTooltipCallback,
-              },
-            },
-          },
+          options: options.line,
         }
 
         // set second graph
@@ -513,7 +525,7 @@
             {
               cutoutPercentage: 100 - 61,
             },
-            options
+            options.pie
           ),
         }
 
@@ -530,7 +542,7 @@
               },
             ],
           },
-          options: options,
+          options: options.pie,
         }
 
         // set fourth graph
@@ -546,7 +558,7 @@
               },
             ],
           },
-          options: options,
+          options: options.pie,
         }
 
         // set fifth graph
@@ -570,35 +582,24 @@
               )
             }),
           },
-          options: {
-            responsive: true,
-            tooltips: {
-              intersect: false,
-              mode: 'index',
-              callbacks: {
-                label: this.lineTooltipCallback,
-              },
-            },
-          },
+          options: options.line,
         }
+      },
+
+      filteredGastos() {
+        return this.allData.filter(gasto => {
+          return gasto.data.ano === this.selectedYear
+        })
       },
     },
 
     watch: {
       gastos(newValue) {
         this.allData = newValue
-        this.parseGastos(
-          this.allData.filter(gasto => {
-            return gasto.data.ano === this.selectedYear
-          })
-        )
+        this.parseGastos(this.filteredGastos())
       },
-      selectedYear(newValue) {
-        this.parseGastos(
-          this.allData.filter(gasto => {
-            return gasto.data.ano === newValue
-          })
-        )
+      selectedYear() {
+        this.parseGastos(this.filteredGastos())
       },
     },
 
