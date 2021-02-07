@@ -46,7 +46,7 @@
         </v-card>
       </v-col>
 
-      <!-- year selector -->
+      <!-- filterDate selector -->
       <v-col
         :cols="$vuetify.breakpoint.lgAndUp ? 3 : 12"
         class="order-2"
@@ -54,7 +54,13 @@
       >
         <v-card color="grey lighten-3">
           <v-row class="px-5">
-            <v-select dense v-model="selectedYear" :items="years"></v-select>
+            <v-select
+              dense
+              v-model="selectedDate"
+              :items="filterDates"
+              return-object
+              item-value="text"
+            ></v-select>
           </v-row>
         </v-card>
       </v-col>
@@ -219,8 +225,11 @@
       lastSize: null,
       hideValues: false,
       sums: {},
-      years: [],
-      selectedYear: new Date().getFullYear(),
+      filterDates: [],
+      selectedDate: {
+        year: new Date().getFullYear(),
+        month: null,
+      },
       allData: [],
       graphs: {
         first: {
@@ -337,21 +346,32 @@
         return ` ${name}: R$ ${valueToShow} (${percentage})`
       },
 
-      fillBaseForLineGraph(data) {
+      fillBaseForLineGraph(data, monthOrYear) {
         let now = new Date()
-        let base = [null, null, null, null, null, null, null, null, null, null, null, null]
-        if (data.ano < now.getFullYear()) {
-          // for a previous year, set all base values as 0
-          base = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        let base
+        if (monthOrYear === 'year') {
+          if (data.ano < now.getFullYear()) {
+            // for a previous year, set all base values as 0
+            base = Array(12).fill(0)
+          } else {
+            // for current year, set 0 only until current month
+            base = [].concat(...Array(data.mes).fill(0), ...Array(12 - data.mes).fill(null))
+          }
         } else {
-          // for current year, set 0 only until current month
-          base = base.map((value, month) => {
-            if (month <= data.mes) {
-              return 0
-            } else {
-              return null
-            }
-          })
+          base = []
+          // get length of the month
+          let totalDays = new Date(data.ano, data.mes + 1, 0).getDate()
+          if (data.ano < now.getFullYear() || data.mes < now.getMonth()) {
+            // for a previous month, set all base values as 0
+            // for earlier months of this year, set all 0s
+            base = Array(totalDays).fill(0)
+          } else {
+            // for current month, set 0 only until today
+            base = [].concat(
+              ...Array(now.getDate()).fill(0),
+              ...Array(totalDays - now.getDate()).fill(null)
+            )
+          }
         }
 
         return base
@@ -360,6 +380,7 @@
       parseGastos(gastos) {
         // empty base
         let first = {
+          labels: [],
           datasets: [],
         }
         let second = {
@@ -375,6 +396,7 @@
           data: [],
         }
         let sixth = {
+          labels: [],
           datasets: [],
         }
 
@@ -415,6 +437,28 @@
         // reset the sums
         this.sums = {}
 
+        // check if it's the whole year or just a month selected
+        let filterType
+        if (this.selectedDate.month === null) {
+          filterType = 'year'
+          first.labels = this.months
+          sixth.labels = this.months
+        } else {
+          filterType = 'month'
+          first.labels = [
+            ...Array.from(
+              Array(new Date(gastos[0].data.ano, gastos[0].data.mes + 1, 0).getDate()),
+              (_, i) => i + 1
+            ),
+          ]
+          sixth.labels = [
+            ...Array.from(
+              Array(new Date(gastos[0].data.ano, gastos[0].data.mes + 1, 0).getDate()),
+              (_, i) => i + 1
+            ),
+          ]
+        }
+
         // iterate over the data
         gastos.forEach(gasto => {
           // parse for the first graph
@@ -423,13 +467,15 @@
           if (firstIndex === -1) {
             first.datasets.push({
               label: gasto.tipo,
-              data: this.fillBaseForLineGraph(gasto.data),
+              data: this.fillBaseForLineGraph(gasto.data, filterType),
             })
             firstIndex = first.datasets.length - 1
           }
-          first.datasets[firstIndex].data[gasto.data.mes] =
-            first.datasets[firstIndex].data[gasto.data.mes] || 0
-          first.datasets[firstIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
+          if (filterType === 'year') {
+            first.datasets[firstIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
+          } else {
+            first.datasets[firstIndex].data[gasto.data.dia - 1] += parseFloat(gasto.valor)
+          }
 
           // parse for the sum of values
           if (Object.keys(this.sums).indexOf(gasto.tipo) === -1) {
@@ -480,19 +526,21 @@
           if (sixthIndex === -1) {
             sixth.datasets.push({
               label: gasto.categoria.nome,
-              data: this.fillBaseForLineGraph(gasto.data),
+              data: this.fillBaseForLineGraph(gasto.data, filterType),
             })
             sixthIndex = sixth.datasets.length - 1
           }
-          sixth.datasets[sixthIndex].data[gasto.data.mes] =
-            sixth.datasets[sixthIndex].data[gasto.data.mes] || 0
-          sixth.datasets[sixthIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
+          if (filterType === 'year') {
+            sixth.datasets[sixthIndex].data[gasto.data.mes] += parseFloat(gasto.valor)
+          } else {
+            sixth.datasets[sixthIndex].data[gasto.data.dia - 1] += parseFloat(gasto.valor)
+          }
         })
 
         // set first graph
         this.graphs.first = {
           data: {
-            labels: this.months,
+            labels: first.labels,
             datasets: first.datasets.map((dataset, i) => {
               return Object.assign(
                 {
@@ -569,7 +617,7 @@
         // set sixth graph
         this.graphs.sixth = {
           data: {
-            labels: this.months,
+            labels: sixth.labels,
             datasets: sixth.datasets.map((dataset, i) => {
               return Object.assign(
                 {
@@ -587,9 +635,18 @@
       },
 
       filteredGastos() {
-        return this.allData.filter(gasto => {
-          return gasto.data.ano === this.selectedYear
-        })
+        if (this.selectedDate.month === null) {
+          return this.allData.filter(gasto => {
+            return gasto.data.ano === this.selectedDate.year
+          })
+        } else {
+          return this.allData.filter(gasto => {
+            return (
+              gasto.data.ano === this.selectedDate.year &&
+              gasto.data.mes === this.selectedDate.month
+            )
+          })
+        }
       },
     },
 
@@ -598,7 +655,7 @@
         this.allData = newValue
         this.parseGastos(this.filteredGastos())
       },
-      selectedYear() {
+      selectedDate() {
         this.parseGastos(this.filteredGastos())
       },
     },
@@ -607,12 +664,48 @@
       ...mapState({
         gastos(state) {
           state.gasto.gastos.forEach(gasto => {
-            // parse for the available years
-            if (this.years.indexOf(gasto.data.ano) === -1) {
-              this.years.push(gasto.data.ano)
-              this.years.sort((a, b) => b - a)
+            // get the dates available to filter
+            // only year
+            let yearIndex = this.filterDates.findIndex(date => {
+              return date.year === gasto.data.ano
+            })
+            if (yearIndex === -1) {
+              this.filterDates.push({
+                text: gasto.data.ano,
+                year: gasto.data.ano,
+                month: null,
+              })
+            }
+            // year and month
+            let monthIndex = this.filterDates.findIndex(date => {
+              return date.year === gasto.data.ano && date.month === gasto.data.mes
+            })
+            if (monthIndex === -1) {
+              this.filterDates.push({
+                text:
+                  this.months[gasto.data.mes].toLowerCase() + '/' + String(gasto.data.ano).slice(2),
+                year: gasto.data.ano,
+                month: gasto.data.mes,
+              })
             }
           })
+
+          this.filterDates.sort((a, b) => {
+            if (a.year !== b.year) {
+              // different years
+              return b.year - a.year
+            } else {
+              // same year
+              if (a.month === null) {
+                return -1
+              } else if (b.month === null) {
+                return 1
+              }
+              return b.month - a.month
+            }
+          })
+
+          this.selectedDate = this.filterDates[0]
 
           return state.gasto.gastos
         },
@@ -631,6 +724,11 @@
         if (!value) return ''
         if (hideValues === true) return '•••••••'
         return value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+      },
+      formatFilterDate: function(value, months) {
+        if (!value) return ''
+        if (value.month === null) return value.year
+        return months[value.month].toLowerCase() + '/' + String(value.year).slice(2)
       },
     },
   }
