@@ -74,17 +74,7 @@
         <v-row>
           <v-col cols="12">
             <v-card color="grey lighten-3">
-              <!-- line chart by Tipo -->
-              <LineChart
-                :height="
-                  $vuetify.breakpoint.lgAndUp ? 150 : $vuetify.breakpoint.smAndUp ? 150 : 300
-                "
-                :width="
-                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 300
-                "
-                :chartData="graphs.first.data"
-                :options="graphs.first.options"
-              />
+              <SankeyChart :chartData="graphs.seventh.data" :options="graphs.seventh.options" />
             </v-card>
           </v-col>
         </v-row>
@@ -102,6 +92,24 @@
                 "
                 :chartData="graphs.second.data"
                 :options="graphs.second.options"
+              />
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <v-row>
+          <v-col cols="12">
+            <v-card color="grey lighten-3">
+              <!-- line chart by Tipo -->
+              <LineChart
+                :height="
+                  $vuetify.breakpoint.lgAndUp ? 150 : $vuetify.breakpoint.smAndUp ? 150 : 300
+                "
+                :width="
+                  $vuetify.breakpoint.lgAndUp ? null : $vuetify.breakpoint.smAndUp ? null : 300
+                "
+                :chartData="graphs.first.data"
+                :options="graphs.first.options"
               />
             </v-card>
           </v-col>
@@ -195,12 +203,14 @@
   import PieChart from '@/components/charts/PieChart.vue'
   import LineChart from '@/components/charts/LineChart.vue'
   import TableChart from '@/components/charts/TableChart.vue'
+  import SankeyChart from '@/components/charts/SankeyChart.vue'
 
   export default {
     components: {
       PieChart,
       LineChart,
       TableChart,
+      SankeyChart,
     },
 
     async beforeCreate() {
@@ -288,6 +298,10 @@
               },
             ],
           },
+          options: {},
+        },
+        seventh: {
+          data: [],
           options: {},
         },
       },
@@ -399,39 +413,9 @@
           labels: [],
           datasets: [],
         }
-
-        // default options
-        let options = {
-          pie: {
-            legend: {
-              position: 'right',
-            },
-            tooltips: {
-              intersect: false,
-              callbacks: {
-                label: this.pieTooltipCallback,
-              },
-            },
-          },
-          line: {
-            responsive: true,
-            tooltips: {
-              intersect: false,
-              mode: 'index',
-              callbacks: {
-                label: this.lineTooltipCallback,
-              },
-            },
-            scales: {
-              yAxes: [
-                {
-                  ticks: {
-                    beginAtZero: true,
-                  },
-                },
-              ],
-            },
-          },
+        let seventh = {
+          splitData: [],
+          data: [],
         }
 
         // reset the sums
@@ -482,6 +466,36 @@
             this.sums[gasto.tipo] = 0
           }
           this.sums[gasto.tipo] += parseFloat(gasto.valor)
+
+          // parse for the seventh graph
+          let sankeyData
+          switch (gasto.tipo) {
+            case 'Renda':
+              sankeyData = {
+                source: gasto.categoria.nome,
+                target: 'Renda',
+                weight: parseFloat(gasto.valor),
+              }
+              break
+            case 'Fixo':
+              sankeyData = {
+                source: 'Fixo',
+                target: gasto.categoria.nome,
+                weight: parseFloat(gasto.valor),
+              }
+              break
+            case 'Variável':
+              sankeyData = {
+                source: 'Variável',
+                target: gasto.categoria.nome,
+                weight: parseFloat(gasto.valor),
+              }
+              break
+          }
+          seventh.splitData[sankeyData.source] = seventh.splitData[sankeyData.source] || {}
+          seventh.splitData[sankeyData.source][sankeyData.target] =
+            seventh.splitData[sankeyData.source][sankeyData.target] || 0
+          seventh.splitData[sankeyData.source][sankeyData.target] += sankeyData.weight
 
           // ignore tipo='Renda' for graphs 2,3,4
           if (gasto.tipo === 'Renda') {
@@ -553,7 +567,7 @@
               )
             }),
           },
-          options: options.line,
+          options: this.lineOptions,
         }
 
         // set second graph
@@ -573,7 +587,7 @@
             {
               cutoutPercentage: 100 - 61,
             },
-            options.pie
+            this.pieOptions
           ),
         }
 
@@ -590,7 +604,7 @@
               },
             ],
           },
-          options: options.pie,
+          options: this.pieOptions,
         }
 
         // set fourth graph
@@ -606,7 +620,7 @@
               },
             ],
           },
-          options: options.pie,
+          options: this.pieOptions,
         }
 
         // set fifth graph
@@ -630,7 +644,38 @@
               )
             }),
           },
-          options: options.line,
+          options: this.lineOptions,
+        }
+
+        // set seventh graph
+        let label = String(this.selectedDate.text)
+        seventh.data.push({
+          source: label,
+          target: 'Fixo',
+          weight: this.sums['Fixo'],
+        })
+        seventh.data.push({
+          source: label,
+          target: 'Variável',
+          weight: this.sums['Variável'],
+        })
+        seventh.data.push({
+          source: 'Renda',
+          target: label,
+          weight: this.sums['Renda'],
+        })
+        Object.keys(seventh.splitData).forEach(source => {
+          Object.keys(seventh.splitData[source]).forEach(target => {
+            seventh.data.push({
+              source: source,
+              target: target,
+              weight: seventh.splitData[source][target],
+            })
+          })
+        })
+        this.graphs.seventh = {
+          data: seventh.data,
+          options: this.sankeyOptions,
         }
       },
 
@@ -710,6 +755,81 @@
           return state.gasto.gastos
         },
       }),
+      pieOptions() {
+        return {
+          legend: {
+            position: 'right',
+          },
+          tooltips: {
+            intersect: false,
+            callbacks: {
+              label: this.pieTooltipCallback,
+            },
+          },
+        }
+      },
+      lineOptions() {
+        return {
+          responsive: true,
+          tooltips: {
+            intersect: false,
+            mode: 'index',
+            callbacks: {
+              label: this.lineTooltipCallback,
+            },
+          },
+          scales: {
+            yAxes: [
+              {
+                ticks: {
+                  beginAtZero: true,
+                },
+              },
+            ],
+          },
+        }
+      },
+      sankeyOptions() {
+        return {
+          linkTooltip: info => {
+            let valueToShow = this.$options.filters.formatCurrency(
+              info.weight.toFixed(0),
+              this.hideValues
+            )
+            return {
+              html: `<b>${info.source}</b> → <b>${info.target}</b><br/>R$ ${valueToShow}`,
+            }
+          },
+          nodeTooltip: info => {
+            let valueIn = this.$options.filters.formatCurrency(
+              info.weightIn.toFixed(0),
+              this.hideValues
+            )
+            let valueOut = this.$options.filters.formatCurrency(
+              info.weightOut.toFixed(0),
+              this.hideValues
+            )
+            let tooltip
+            if (info.label === String(this.selectedDate.text)) {
+              // summary of the selected date
+              tooltip = `<b>${info.label}</b><br/> ↑ R$ ${valueIn} <br/> ↓ R$ ${valueOut}`
+            } else if (valueIn === valueOut) {
+              // "hubs": Renda, Variável, Fixo
+              tooltip = `<b>${info.label}</b><br/> R$ ${valueIn}`
+            } else if (info.weightIn > info.weightOut) {
+              // Renda
+              tooltip = `<b>${info.label}</b><br/> ↓ R$ ${valueIn}`
+            } else {
+              // Variável, Fixo
+              tooltip = `<b>${info.label}</b><br/> ↑ R$ ${valueOut}`
+            }
+            return {
+              html: tooltip,
+            }
+          },
+          colors: this.colors,
+        }
+      },
       screenSize() {
         switch (this.$vuetify.breakpoint.name) {
           default:
