@@ -4,7 +4,7 @@ export default {
   namespaced: true,
   state: {
     gastos: [],
-    tipos: ['Variável', 'Fixo', 'Renda'],
+    tipos: ['Variável', 'Fixo', 'Renda', 'Investimento'],
   },
   mutations: {
     // synchronous

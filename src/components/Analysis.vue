@@ -491,13 +491,19 @@
                 weight: parseFloat(gasto.valor),
               }
               break
+            case 'Investimento':
+              sankeyData = {
+                source: 'Investimento',
+                target: gasto.categoria.nome,
+                weight: parseFloat(gasto.valor),
+              }
           }
           seventh.splitData[sankeyData.source] = seventh.splitData[sankeyData.source] || {}
           seventh.splitData[sankeyData.source][sankeyData.target] =
             seventh.splitData[sankeyData.source][sankeyData.target] || 0
           seventh.splitData[sankeyData.source][sankeyData.target] += sankeyData.weight
 
-          // ignore tipo='Renda' for graphs 2,3,4
+          // ignore tipo='Renda'|'Investimento' for graphs 2,3,4
           if (gasto.tipo === 'Renda') {
             return
           }
@@ -660,6 +666,11 @@
           weight: this.sums['Variável'],
         })
         seventh.data.push({
+          source: label,
+          target: 'Investimento',
+          weight: this.sums['Investimento'],
+        })
+        seventh.data.push({
           source: 'Renda',
           target: label,
           weight: this.sums['Renda'],
@@ -814,13 +825,13 @@
               // summary of the selected date
               tooltip = `<b>${info.label}</b><br/> ↑ R$ ${valueIn} <br/> ↓ R$ ${valueOut}`
             } else if (valueIn === valueOut) {
-              // "hubs": Renda, Variável, Fixo
+              // "hubs": Renda, Variável, Fixo, Investimento
               tooltip = `<b>${info.label}</b><br/> R$ ${valueIn}`
             } else if (info.weightIn > info.weightOut) {
               // Renda
               tooltip = `<b>${info.label}</b><br/> ↓ R$ ${valueIn}`
             } else {
-              // Variável, Fixo
+              // Variável, Fixo, Investimento
               tooltip = `<b>${info.label}</b><br/> ↑ R$ ${valueOut}`
             }
             return {
