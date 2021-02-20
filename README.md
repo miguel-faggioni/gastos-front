@@ -1,22 +1,18 @@
-
-# Table of Contents
-
-1.  [Personal expenses management](#org0e0c385)
-    1.  [Introduction](#orgc51a23b)
-    2.  [Architecture](#org93fdac1)
-    3.  [Installing and running the project](#org398cd3f)
-    4.  [How to use](#org208ed42)
-        1.  [Create new expense category](#org586b5b6)
-        2.  [Create payment method](#org90ad986)
-        3.  [Register expense](#org0df88b9)
-        4.  [Graphs](#orga1716c9)
-    5.  [Contribution](#org5abc083)
-    6.  [License](#org1428ab1)
-
-
-<a id="org0e0c385"></a>
-
 # Personal expenses management
+
+## Table of Contents
+
+1.  [Introduction](#orgc51a23b)
+2.  [Architecture](#org93fdac1)
+3.  [Installing and running the project](#org398cd3f)
+4.  [How to use](#org208ed42)
+    1.  [Create new expense category](#org586b5b6)
+    2.  [Create payment method](#org90ad986)
+    3.  [Register expense](#org0df88b9)
+    4.  [Graphs](#orga1716c9)
+5.  [Contribution](#org5abc083)
+6.  [License](#org1428ab1)
+
 
 
 <a id="orgc51a23b"></a>
@@ -103,7 +99,7 @@ Then to run the project locally run:
 
 This will make the system available on <http://localhost:8080/>.
 
-However it will access the backend running for <https://anotar.coisa.online/>, to point it to another backend, \`axios.defaults.baseURL\` must be updated on \`src/plugins/axios.js\` to the desired backend url. The repository for the backend can be found on <https://github.com/miguel-faggioni/gastos-back>.
+However it will access the backend running for <https://anotar.coisa.online/>, to point it to another backend, `axios.defaults.baseURL` must be updated on `src/plugins/axios.js` to the desired backend url. The repository for the backend can be found on <https://github.com/miguel-faggioni/gastos-back>.
 
 
 <a id="org208ed42"></a>
@@ -115,21 +111,21 @@ However it will access the backend running for <https://anotar.coisa.online/>, t
 
 ### Create new expense category
 
-![img](./imgs/create-category.gif)
+<img src="./imgs/create-category.gif" width="250" />
 
 
 <a id="org90ad986"></a>
 
 ### Create payment method
 
-![img](./imgs/create-payment-type.gif)
+<img src="./imgs/create-payment-type.gif" width="250" />
 
 
 <a id="org0df88b9"></a>
 
 ### Register expense
 
-![img](./imgs/register-expense.gif)
+<img src="./imgs/register-expense.gif" width="250" />
 
 
 <a id="orga1716c9"></a>

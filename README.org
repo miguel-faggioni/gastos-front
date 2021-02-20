@@ -107,7 +107,6 @@
      #+NAME:   fig:Line graph - expenses by category
      [[./imgs/line-by-category.png]]
 
-
 ** Contribution
    Any type of contribution is welcome, however since this is a side-project, I kindly ask of you to be patient in case there is any delay to respond to any issue or pull-request opened.
 
