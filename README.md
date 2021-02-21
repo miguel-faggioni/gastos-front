@@ -2,20 +2,20 @@
 
 ## Table of Contents
 
-1.  [Introduction](#orgc51a23b)
-2.  [Architecture](#org93fdac1)
-3.  [Installing and running the project](#org398cd3f)
-4.  [How to use](#org208ed42)
-    1.  [Create new expense category](#org586b5b6)
-    2.  [Create payment method](#org90ad986)
-    3.  [Register expense](#org0df88b9)
-    4.  [Graphs](#orga1716c9)
-5.  [Contribution](#org5abc083)
-6.  [License](#org1428ab1)
+1.  [Introduction](#org237780f)
+2.  [Architecture](#orgf2c1d5e)
+3.  [Installing and running the project](#org6c7ab97)
+4.  [How to use](#org66fd11b)
+    1.  [Create new expense category](#org29d79ba)
+    2.  [Create payment method](#org44fe68e)
+    3.  [Register expense](#orge2d8052)
+    4.  [Graphs](#orga4cda91)
+5.  [Self-hosting](#org83d82ca)
+6.  [Contribution](#org00127b2)
+7.  [License](#orgcb6b472)
 
 
-
-<a id="orgc51a23b"></a>
+<a id="org237780f"></a>
 
 ## Introduction
 
@@ -30,10 +30,10 @@ Its features include ways to:
 -   register recurring monthly expenses that are automatically save on the given day of the month;
 -   visualize the yearly or monthly expenses with graphs;
 
-A running instance of the project can be found on <https://anotar.coisa.online/>.
+A running instance of the project, together with [backend code](https://github.com/miguel-faggioni/gastos-back), can be found on <https://anotar.coisa.online/>.
 
 
-<a id="org93fdac1"></a>
+<a id="orgf2c1d5e"></a>
 
 ## Architecture
 
@@ -85,7 +85,7 @@ A running instance of the project can be found on <https://anotar.coisa.online/>
             └── Landing.vue - horrendous landing page
 
 
-<a id="org398cd3f"></a>
+<a id="org6c7ab97"></a>
 
 ## Installing and running the project
 
@@ -99,36 +99,36 @@ Then to run the project locally run:
 
 This will make the system available on <http://localhost:8080/>.
 
-However it will access the backend running for <https://anotar.coisa.online/>, to point it to another backend, `axios.defaults.baseURL` must be updated on `src/plugins/axios.js` to the desired backend url. The repository for the backend can be found on <https://github.com/miguel-faggioni/gastos-back>.
+However it will access the backend running for <https://anotar.coisa.online/>, to point it to another backend, \`axios.defaults.baseURL\` must be updated on \`src/plugins/axios.js\` to the desired backend url. The repository for the backend can be found on <https://github.com/miguel-faggioni/gastos-back>.
 
 
-<a id="org208ed42"></a>
+<a id="org66fd11b"></a>
 
 ## How to use
 
 
-<a id="org586b5b6"></a>
+<a id="org29d79ba"></a>
 
 ### Create new expense category
 
-<img src="./imgs/create-category.gif" width="250" />
+![img](./imgs/create-category.gif)
 
 
-<a id="org90ad986"></a>
+<a id="org44fe68e"></a>
 
 ### Create payment method
 
-<img src="./imgs/create-payment-type.gif" width="250" />
+![img](./imgs/create-payment-type.gif)
 
 
-<a id="org0df88b9"></a>
+<a id="orge2d8052"></a>
 
 ### Register expense
 
-<img src="./imgs/register-expense.gif" width="250" />
+![img](./imgs/register-expense.gif)
 
 
-<a id="orga1716c9"></a>
+<a id="orga4cda91"></a>
 
 ### Graphs
 
@@ -151,14 +151,31 @@ On the dropdown it is possible to select a specific year or month with which to 
     ![img](./imgs/line-by-category.png)
 
 
-<a id="org5abc083"></a>
+<a id="org83d82ca"></a>
+
+## Self-hosting
+
+In order to build and deploy when self-hosting, some scripts on `package.json` must be updated:
+
+-   `deploy`
+    -   change `anotar.coisa.online` to the correct AWS S3 bucket
+-   `postdeploy`
+    -   change `EYSHIAOAERFMG` to the correct AWS CloudFront ID
+
+Then to build and deploy the code, run:
+
+    yarn build
+    yarn deploy
+
+
+<a id="org00127b2"></a>
 
 ## Contribution
 
 Any type of contribution is welcome, however since this is a side-project, I kindly ask of you to be patient in case there is any delay to respond to any issue or pull-request opened.
 
 
-<a id="org1428ab1"></a>
+<a id="orgcb6b472"></a>
 
 ## License
 

@@ -11,7 +11,7 @@
    - register recurring monthly expenses that are automatically save on the given day of the month;
    - visualize the yearly or monthly expenses with graphs;
 
-   A running instance of the project can be found on https://anotar.coisa.online/.
+   A running instance of the project, together with [[https://github.com/miguel-faggioni/gastos-back][backend code]], can be found on https://anotar.coisa.online/.
 
 ** Architecture
    #+begin_src
@@ -106,6 +106,20 @@
      And another where they are split by their category:
      #+NAME:   fig:Line graph - expenses by category
      [[./imgs/line-by-category.png]]
+
+** Self-hosting
+   In order to build and deploy when self-hosting, some scripts on ~package.json~ must be updated:
+
+   - ~deploy~
+     - change ~anotar.coisa.online~ to the correct AWS S3 bucket
+   - ~postdeploy~
+     - change ~EYSHIAOAERFMG~ to the correct AWS CloudFront ID
+
+   Then to build and deploy the code, run:
+   #+begin_src bash
+   yarn build
+   yarn deploy
+   #+end_src
 
 ** Contribution
    Any type of contribution is welcome, however since this is a side-project, I kindly ask of you to be patient in case there is any delay to respond to any issue or pull-request opened.

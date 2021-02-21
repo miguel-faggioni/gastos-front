@@ -1,7 +1,6 @@
 {
   "name": "frontend-Gestao_de_gastos",
   "version": "0.1.0",
-  "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
@@ -19,6 +18,8 @@
       "pre-commit": "lint-staged"
     }
   },
+  "author": "Miguel F.",
+  "license": "AGPL-3.0",
   "dependencies": {
     "@sentry/tracing": "^6.1.0",
     "@sentry/vue": "^6.1.0",
