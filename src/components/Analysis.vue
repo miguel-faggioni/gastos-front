@@ -504,7 +504,7 @@
           seventh.splitData[sankeyData.source][sankeyData.target] += sankeyData.weight
 
           // ignore tipo='Renda'|'Investimento' for graphs 2,3,4
-          if (gasto.tipo === 'Renda') {
+          if (gasto.tipo === 'Renda' || gasto.tipo === 'Investimento') {
             return
           }
 
