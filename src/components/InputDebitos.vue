@@ -221,6 +221,8 @@
             categoria: this.debito.categoria,
             pagamento: this.debito.modo_de_pagamento,
             dia: this.debito.dia,
+            obs: this.debito.obs,
+            tipo: this.debito.tipo,
           })
         } else {
           await this.$store.dispatch('debito/create', {
@@ -228,6 +230,8 @@
             categoria: this.debito.categoria,
             pagamento: this.debito.modo_de_pagamento,
             dia: this.debito.dia,
+            obs: this.debito.obs,
+            tipo: this.debito.tipo,
           })
           localStorage.setItem('debito.lastCategoria', JSON.stringify(this.debito.categoria))
           localStorage.setItem('debito.lastModo', JSON.stringify(this.debito.modo_de_pagamento))
