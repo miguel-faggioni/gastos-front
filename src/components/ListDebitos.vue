@@ -44,7 +44,7 @@
     </v-data-table>
 
     <!-- dialog to delete row -->
-    <v-dialog v-model="dialogs.delete">
+    <v-dialog v-model="dialogs.delete" width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">Tem certeza que deseja remover este débito automático?</span>
@@ -66,7 +66,7 @@
     <!-- end of dialog to remove row -->
 
     <!-- dialog to edit row -->
-    <v-dialog v-model="dialogs.edit">
+    <v-dialog v-model="dialogs.edit" width="500px">
       <v-card>
         <v-card-title>
           <span class="headline">Editar débito automático</span>

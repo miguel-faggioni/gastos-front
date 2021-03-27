@@ -72,7 +72,7 @@
     </v-snackbar>
 
     <!-- download dialog -->
-    <v-dialog v-model="dialogs.download">
+    <v-dialog v-model="dialogs.download" width="500px">
       <v-card>
         <v-card-text>
           <form>
@@ -140,7 +140,7 @@
     </v-dialog>
 
     <!-- remove dialog 1/2 -->
-    <v-dialog v-model="dialogs.erase">
+    <v-dialog v-model="dialogs.erase" width="500px">
       <v-card>
         <v-card-title>
           <span class="headline"
@@ -163,7 +163,7 @@
     </v-dialog>
 
     <!-- remove dialog 2/2 -->
-    <v-dialog v-model="dialogs.eraseConfirmation">
+    <v-dialog v-model="dialogs.eraseConfirmation" width="500px">
       <v-card>
         <v-card-title>
           <span class="headline"
