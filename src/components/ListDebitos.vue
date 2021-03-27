@@ -115,7 +115,7 @@
         },
         {
           text: 'Dia do mês',
-          value: 'dia',
+          value: 'dia_do_mes',
           sort: (a, b) => {
             return a - b
           },
