@@ -4,7 +4,7 @@ import VueAxios from 'vue-axios'
 
 Vue.use(VueAxios, axios)
 //axios.defaults.baseURL = process.env.VUE_APP_API_URL || ''
-axios.defaults.baseURL = 'https://api.coisa.online:5001/'
+axios.defaults.baseURL = 'https://api.coisa.online/'
 
 /* *
 axios.defaults.baseURL = 'https://localhost:5001/'
