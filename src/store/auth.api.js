@@ -1,4 +1,13 @@
 import axios from 'axios'
+import * as Sentry from '@sentry/vue'
+
+const parseJwt = token => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]))
+  } catch (e) {
+    return null
+  }
+}
 
 export default {
   namespaced: true,
@@ -9,6 +18,10 @@ export default {
     // synchronous
     setToken(state, token) {
       state.token = token
+      let jwt = parseJwt(token)
+      if (jwt) {
+        Sentry.setUser({ id: jwt.id })
+      }
     },
     unsetToken(state) {
       state.token = null
