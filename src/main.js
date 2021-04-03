@@ -11,10 +11,16 @@ import './plugins/axios'
 import './plugins/date'
 import './plugins/array'
 import './plugins/sentry'
+import { VuePlausible } from 'vue-plausible'
 
 Vue.use(Vuelidate)
 Vue.use(DatetimePicker)
 Vue.config.productionTip = false
+Vue.use(VuePlausible, {
+  hashMode: true,
+  apiHost: 'https://analisar.coisa.online',
+})
+Vue.$plausible.enableAutoPageviews()
 
 new Vue({
   router,
