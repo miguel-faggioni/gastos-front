@@ -9,7 +9,20 @@ export default {
   mutations: {
     // synchronous
     set(state, gastos) {
-      state.gastos = gastos
+      state.gastos = gastos.map(gasto => {
+        // convert the unix timestamp into the correct date object
+        const data = new Date(Number(gasto.data.unix_timestamp))
+        gasto.data.unix_timestamp = data.getTime()
+        gasto.data.dia = data.getDate()
+        gasto.data.mes = data.getMonth()
+        gasto.data.ano = data.getFullYear()
+        gasto.data.dia_da_semana = data.getDay()
+        gasto.data.semana_do_ano = data.getWeekOfYear()
+        gasto.data.hora = data.getHours()
+        gasto.data.minuto = data.getMinutes()
+        gasto.data.segundo = data.getSeconds()
+        return gasto
+      })
     },
     push(state, gasto) {
       state.gastos.splice(0, 0, gasto)
