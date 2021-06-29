@@ -140,6 +140,14 @@
           },
         },
         {
+          text: 'Tipo',
+          value: 'tipo',
+        },
+        {
+          text: 'Obs',
+          value: 'obs_abr',
+        },
+        {
           text: 'Ações',
           value: 'actions',
           sortable: false,
@@ -239,6 +247,13 @@
         let currentYear = new Date().getFullYear()
         // for each row received
         gastos.forEach(gasto => {
+          // alter some values
+          let obs_max_size = 20
+          gasto.obs_abr = gasto.obs.slice(0, obs_max_size)
+          if (gasto.obs.length > obs_max_size) {
+            gasto.obs_abr = gasto.obs_abr + '...'
+          }
+
           let gastoDate = new Date(Number(gasto.data.unix_timestamp))
           gasto.date = gastoDate
           // split into buckets for each each month
@@ -278,6 +293,8 @@
           item.categoria.nome.toLowerCase().indexOf(search) !== -1 ||
           item.modo_de_pagamento.sigla.toLowerCase().indexOf(search) !== -1 ||
           item.modo_de_pagamento.nome.toLowerCase().indexOf(search) !== -1 ||
+          item.obs.toLowerCase().indexOf(search) !== -1 ||
+          item.tipo.toLowerCase().indexOf(search) !== -1 ||
           String(item.date.getDate()).indexOf(search) !== -1 ||
           item.date
             .getDayOfWeekAbbreviation(item.date.getDay())

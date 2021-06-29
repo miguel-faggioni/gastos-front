@@ -121,6 +121,14 @@
           },
         },
         {
+          text: 'Tipo',
+          value: 'tipo',
+        },
+        {
+          text: 'Obs',
+          value: 'obs_abr',
+        },
+        {
           text: 'Ações',
           value: 'actions',
           sortable: false,
@@ -154,6 +162,12 @@
       }),
     },
 
+    watch: {
+      debitos(newValue) {
+        this.parseDebitos(newValue)
+      },
+    },
+
     methods: {
       tableFilter(value, search, item) {
         search = search.toLowerCase()
@@ -161,6 +175,7 @@
           String(item.valor).indexOf(search) !== -1 ||
           item.categoria.sigla.toLowerCase().indexOf(search) !== -1 ||
           item.categoria.nome.toLowerCase().indexOf(search) !== -1 ||
+          item.obs.toLowerCase().indexOf(search) !== -1 ||
           String(item.dia).indexOf(search) !== -1
         )
       },
@@ -201,6 +216,17 @@
         })
         this.dialogs.edit = false
         this.dialogs.delete = false
+      },
+
+      parseDebitos(debitos) {
+        debitos.forEach(debito => {
+          // alter some values
+          let obs_max_size = 20
+          debito.obs_abr = debito.obs.slice(0, obs_max_size)
+          if (debito.obs.length > obs_max_size) {
+            debito.obs_abr = debito.obs_abr + '...'
+          }
+        })
       },
     },
 
